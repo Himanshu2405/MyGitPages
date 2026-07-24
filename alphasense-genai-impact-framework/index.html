@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AlphaSense — GenAI Impact Framework</title>
+<style>
+:root {
+  --bg: #0f0f0f;
+  --bg2: #1a1a1a;
+  --bg3: #242424;
+  --border: #2e2e2e;
+  --text: #e8e8e8;
+  --text2: #a0a0a0;
+  --text3: #666;
+  --accent: #4f8ef7;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --neutral: #6b7280;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; line-height: 1.6; }
+.container { max-width: 1040px; margin: 0 auto; padding: 32px 24px; }
+h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+h2 { font-size: 18px; font-weight: 600; margin: 24px 0 10px; }
+h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; }
+p  { color: var(--text2); margin: 6px 0; }
+.subtitle { color: var(--text2); margin-bottom: 20px; }
+
+/* Tab nav */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 4px; }
+.tab-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px; background: transparent; color: var(--text2); cursor: pointer; font-size: 13px; transition: all .15s; }
+.tab-btn:hover { border-color: var(--accent); color: var(--text); }
+.tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+/* Cards */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; }
+.card-header { padding: 12px 16px; font-weight: 600; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.card-body { padding: 14px 16px; }
+.grid { display: grid; gap: 14px; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+@media(max-width:700px){ .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
+
+/* Callouts */
+.callout { border-left: 4px solid var(--neutral); background: var(--bg2); border-radius: 0 6px 6px 0; padding: 12px 14px; margin: 10px 0; }
+.callout-title { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.callout.success { border-color: var(--success); }
+.callout.warning { border-color: var(--warning); }
+.callout.danger  { border-color: var(--danger);  }
+.callout.info    { border-color: var(--info);    }
+.callout.success .callout-title { color: var(--success); }
+.callout.warning .callout-title { color: var(--warning); }
+.callout.danger  .callout-title { color: var(--danger);  }
+.callout.info    .callout-title { color: var(--info);    }
+
+/* Pills */
+.pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+.pill.success { background: rgba(34,197,94,.15); color: var(--success); }
+.pill.warning { background: rgba(245,158,11,.15); color: var(--warning); }
+.pill.danger  { background: rgba(239,68,68,.15);  color: var(--danger);  }
+.pill.info    { background: rgba(59,130,246,.15); color: var(--info);    }
+.pill.neutral { background: var(--bg3); color: var(--text2); }
+
+/* Stats */
+.stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+.stat-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; min-width: 130px; }
+.stat-value { font-size: 20px; font-weight: 700; }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* Tables */
+.tbl-wrap { overflow-x: auto; margin: 12px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: var(--bg3); color: var(--text2); font-weight: 600; padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+/* Code */
+pre, code { font-family: "JetBrains Mono", "Fira Code", monospace; font-size: 12px; }
+pre { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; overflow-x: auto; line-height: 1.7; color: var(--text); white-space: pre; margin: 10px 0; }
+
+/* Collapsible */
+details { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin: 6px 0; }
+summary { padding: 10px 14px; cursor: pointer; font-weight: 500; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+summary::after { content: "▸"; color: var(--text2); transition: transform .2s; }
+details[open] summary::after { transform: rotate(90deg); }
+details .details-body { padding: 12px 16px; border-top: 1px solid var(--border); }
+.tag { font-size: 11px; color: var(--text3); }
+ul.bullet { padding-left: 18px; }
+ul.bullet li { color: var(--text2); margin: 4px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>AlphaSense — GenAI Impact Framework</h1>
+<p class="subtitle">Deep strategic analysis: measuring the true impact of GenAI features on WAU/DAU retention and user habit formation</p>
+<hr class="divider">
+<div class="tabs"><button class="tab-btn active" data-group="main" data-tab="problem">The Problem</button>
+<button class="tab-btn" data-group="main" data-tab="feature_habit">Feature × Habit Map</button>
+<button class="tab-btn" data-group="main" data-tab="metrics">Metrics</button>
+<button class="tab-btn" data-group="main" data-tab="experiment">Experiment Design</button>
+<button class="tab-btn" data-group="main" data-tab="strategy">Strategic Implications</button>
+</div>
+<hr class="divider">
+<div class="tab-panel active" data-group="main" data-tab="problem"><h2>The Core Measurement Problem</h2><div class="callout warning"><div class="callout-title">The Novelty Trap</div><p>Every new feature sees an engagement spike at launch. The hard question is: does GenAI produce sustained habit formation, or is it driven by novelty? The answer determines pricing strategy, roadmap investment, and retention model.</p></div><div class="grid grid-2"><div><div class="card"><div class="card-header">What we can measure today</div><div class="card-body"><ul class="bullet"><li>Session volume and WAU/DAU</li><li>Feature-specific click and activation rates</li><li>User cohort retention curves</li><li>Self-reported NPS / satisfaction</li></ul></div></div></div><div><div class="card"><div class="card-header">What we cannot easily measure</div><div class="card-body"><ul class="bullet"><li>Intrinsic habit vs push-driven return</li><li>True causal impact (selection: power users adopt first)</li><li>Long-run LTV change from GenAI activation</li><li>Whether GenAI replaced or supplemented traditional search</li></ul></div></div></div></div><h3>Three Competing Hypotheses</h3><div class="tbl-wrap"><table><thead><tr><th>Hypothesis</th><th>What the Data Shows</th><th>Strategic Implication</th></tr></thead><tbody><tr><td>H1: GenAI drives genuine habit</td><td>D30 retention gap persists; unprompted return growing; scheduled agents expanding</td><td>AI-tier pricing justified; activation funnel is the bottleneck to fix</td></tr><tr><td>H2: GenAI drives novelty, not habit</td><td>D7 to D30 decay visible; GenAI session share declining cohort-over-cohort</td><td>Retention moat still in traditional search + data coverage; GenAI is a feature, not a platform</td></tr><tr><td>H3: Heterogeneous by persona</td><td>Analysts retain via GenAI; C-suite does not; PMs in between</td><td>Persona-specific onboarding and pricing tiers; don't average across roles</td></tr></tbody></table></div></div>
+<div class="tab-panel" data-group="main" data-tab="feature_habit"><h2>Feature × Habit Loop Map</h2><div class="callout info"><div class="callout-title">The Habit Loop Framework</div><p>Cue → Routine → Reward → Investment. For each GenAI feature, map: what triggers use (cue), what action is taken (routine), what value is delivered (reward), and what makes switching costly (investment).</p></div><div class="tbl-wrap"><table><thead><tr><th>Feature</th><th>Cue</th><th>Routine</th><th>Reward</th><th>Investment</th><th>Habit Signal</th><th>Activation Proxy</th></tr></thead><tbody><tr><td>Generative Search</td><td>Research question surfaces</td><td>Natural language query + follow-up thread</td><td>Cited analyst-grade answer in seconds</td><td>Saved search threads, query history</td><td>Unprompted daily return to search bar</td><td>First query with 2+ follow-ups in one thread</td></tr><tr><td>Deep Research</td><td>Complex project or coverage initiation</td><td>Queue 30-min autonomous analysis</td><td>Analyst-grade company primer / market landscape</td><td>Formatting templates, saved prompts, institutional outputs</td><td>Weekly Deep Research run per active project</td><td>First output downloaded or shared</td></tr><tr><td>Smart Summaries</td><td>Earnings event or company filing</td><td>Open summary before reading full transcript</td><td>60-second catch-up on key points + analyst Q&A</td><td>Watchlist of covered companies</td><td>Earnings-day return rate vs non-earnings days</td><td>First summary opened within 24h of earnings release</td></tr><tr><td>Generative Grid</td><td>Cross-company or multi-doc comparison task</td><td>Build multi-document prompt table</td><td>Structured comparative analysis in one view</td><td>Saved grid templates, reusable prompt sets</td><td>Repeat grid creation within same research thread</td><td>First grid with 3+ documents and live feed enabled</td></tr><tr><td>Workflow Agents</td><td>Recurring research delivery need</td><td>Schedule pre-built or custom agent</td><td>Research pushed proactively — no manual pull</td><td>Custom agent configurations, scheduled cadences</td><td># scheduled agents per user (push > pull mindset shift)</td><td>First scheduled agent delivering to inbox</td></tr><tr><td>Due Diligence Workspace</td><td>New deal / M&A opportunity initiated</td><td>Upload VDR + run specialized DD agents</td><td>Deal-ready insights, IC prep, risk surfacing</td><td>Deal workspace with VDR files, custom agents, team sharing</td><td>Workspace sessions per active deal, cross-reference queries</td><td>First workspace with 5+ documents and one AI agent run</td></tr><tr><td>Monitoring & Alerts</td><td>Platform detects movement on watchlist</td><td>Push notification → open platform to read context</td><td>Ahead of market / competitor on breaking development</td><td>Curated watchlists, alert thresholds, coverage breadth</td><td>Notification-to-session conversion rate</td><td>First alert that triggers a same-session follow-up query</td></tr></tbody></table></div></div>
+<div class="tab-panel" data-group="main" data-tab="metrics"><h2>Metrics Framework</h2><h3>Primary Retention Metrics</h3><div class="tbl-wrap"><table><thead><tr><th>Metric</th><th>Purpose</th><th>Why It Matters</th><th>Implementation Note</th></tr></thead><tbody><tr><td>WAU/DAU ratio by GenAI cohort</td><td>Core retention health</td><td>Is GenAI driving more frequent, consistent engagement?</td><td>Track separately for each feature adoption tier</td></tr><tr><td>D7 / D30 / D90 retention curves</td><td>Lagging retention</td><td>Does adoption of GenAI shift the churn cliff forward?</td><td>Plot GenAI adopters vs non-adopters, by feature depth</td></tr><tr><td>Feature adoption breadth</td><td>Engagement depth</td><td># GenAI features actively used per user per month</td><td>Single-feature vs multi-feature users have different LTV</td></tr><tr><td>Seat expansion rate</td><td>Business outcome</td><td>Do GenAI-habituated users trigger new license seats?</td><td>Link to CRM expansion events within 90 days of activation</td></tr><tr><td>Unprompted return rate</td><td>Habit formation</td><td>Sessions initiated without email/notification trigger</td><td>Best single proxy for intrinsic habit; requires session attribution</td></tr></tbody></table></div><h3>Leading Indicators</h3><div class="tbl-wrap"><table><thead><tr><th>Metric</th><th>Signal Type</th><th>Insight</th></tr></thead><tbody><tr><td>Time-to-first-GenAI in session</td><td>Habit cue strength</td><td>Is GenAI becoming the default starting point?</td></tr><tr><td>Follow-up query rate (Gen Search)</td><td>Thread depth</td><td>Users who ask 2+ follow-ups are 3x more likely to return next day</td></tr><tr><td>Scheduled agent count per user</td><td>Push-to-pull mindset shift</td><td>Highest-conviction habit signal</td></tr><tr><td>Citation click-through rate</td><td>Output trust proxy</td><td>High click rate = user validates answers = growing confidence in AI quality</td></tr><tr><td>Output share/export rate</td><td>Social reinforcement loop</td><td>When users share Deep Research outputs, they anchor colleagues</td></tr><tr><td>Alert-to-session conversion</td><td>Monitoring habit trigger</td><td>Conversion measures whether the cue is working</td></tr></tbody></table></div><h3>Guardrail Metrics</h3><div class="tbl-wrap"><table><thead><tr><th>Guardrail</th><th>Severity</th><th>Rule</th></tr></thead><tbody><tr><td>Novelty decay check</td><td><span class="pill danger">danger</span></td><td>Flag if GenAI session share drops >15% from D7 to D30 for any activation cohort</td></tr><tr><td>Keyword search displacement</td><td><span class="pill warning">warning</span></td><td>Track if traditional search volume declines as GenAI grows — displacement vs net-new usage matters</td></tr><tr><td>SRM on all rollout experiments</td><td><span class="pill danger">danger</span></td><td>Enterprise B2B users self-select into features heavily; SRM violations will be common</td></tr><tr><td>Hallucination proxy rate</td><td><span class="pill warning">warning</span></td><td>High rephrase/correction rate after first answer = user distrust = habit will not form</td></tr><tr><td>Breadth guardrail: median user</td><td><span class="pill info">info</span></td><td>Don't optimize for power users. Track GenAI adoption at the P50 user, not the P90</td></tr><tr><td>SUTVA violations</td><td><span class="pill warning">warning</span></td><td>Enterprise colleagues talk. Spillover from treatment to control within same firm is likely</td></tr></tbody></table></div></div>
+<div class="tab-panel" data-group="main" data-tab="experiment"><div class="callout warning"><div class="callout-title">The B2B Experiment Design Constraint</div><p>You cannot do a clean holdout of a core feature on enterprise B2B users. Annual contracts, procurement cycles, and enterprise expectations mean you need creative causal identification strategies.</p></div><h2>Experiment Portfolio</h2><div class="tbl-wrap"><table><thead><tr><th>Method</th><th>When to Use</th><th>Priority</th><th>Key Tradeoff</th></tr></thead><tbody><tr><td>Staggered Rollout DiD</td><td>Any new GenAI feature launch with phased rollout</td><td><span class="pill success">Primary</span></td><td>Requires parallel trends assumption; firm-size differences across waves can confound</td></tr><tr><td>Within-Firm Holdout</td><td>Feature launches where individual randomization is possible</td><td><span class="pill success">Primary</span></td><td>SUTVA violations — same-firm users compare notes</td></tr><tr><td>Activation Gate Experiment</td><td>Onboarding optimization</td><td><span class="pill info">High</span></td><td>Short-run experiment; need 90-day holdout to see if activation holds vs novelty</td></tr><tr><td>Feature Discovery Nudge</td><td>Users active but not using GenAI features</td><td><span class="pill info">High</span></td><td>Risk of notification fatigue; keep nudge treatment arms narrow</td></tr><tr><td>Persona-Stratified Cohort Analysis</td><td>Ongoing measurement (not an experiment)</td><td><span class="pill info">High</span></td><td>Observational only — cannot claim causality</td></tr><tr><td>Long-Run Global Holdout</td><td>Core GenAI surface (Generative Search) is mature</td><td><span class="pill warning">Strategic</span></td><td>Significant opportunity cost; ethically tricky for premium B2B users</td></tr></tbody></table></div><h3>Experiment Sequencing</h3><div class="tbl-wrap"><table><thead><tr><th>Quarter</th><th>Experiment</th><th>Goal</th><th>Decision It Enables</th></tr></thead><tbody><tr><td>Q3 2026</td><td>Activation Gate Experiment (onboarding)</td><td>Does faster path to GenAI aha-moment lift D7 retention?</td><td>Prioritize onboarding investment vs feature depth</td></tr><tr><td>Q3 2026</td><td>Feature Discovery Nudge (dormant GenAI users)</td><td>Can we convert non-GenAI active users?</td><td>Identify unrealized TAM within existing customer base</td></tr><tr><td>Q4 2026</td><td>Staggered Rollout DiD (next feature wave)</td><td>Isolate WAU/DAU impact of new Workflow Agent types</td><td>Prove ROI of agent roadmap to exec team</td></tr><tr><td>Q4 2026</td><td>Within-Firm Holdout (Generative Grid)</td><td>Clean causal estimate for Grid retention lift</td><td>Grid pricing / feature tiering decision</td></tr><tr><td>Q1 2027</td><td>Global Holdout — Generative Search</td><td>Gold-standard LTV impact of core GenAI surface</td><td>Justify AI-tier pricing and GenAI investment level</td></tr><tr><td>Ongoing</td><td>Persona-Stratified Cohort Analysis</td><td>Which user roles benefit most from GenAI habit?</td><td>Targeted onboarding and feature prioritization by segment</td></tr></tbody></table></div></div>
+<div class="tab-panel" data-group="main" data-tab="strategy"><h2>Strategic Decision Framework</h2><div class="grid grid-2"><div><div class="card"><div class="card-header">Scenario A — GenAI IS driving habit <span class="pill neutral"><span class="pill success">Scenario A</span></span></div><div class="card-body"><p>Signals: Scheduled agents growing, unprompted return rising, D30 retention gap >8pp</p><h3>Actions</h3><ul class="bullet"><li>Reframe pricing: AI-tier or usage-based pricing becomes defensible</li><li>Collapse the activation funnel: bottleneck is first high-quality output</li><li>Invest in scheduled agents as #1 habit anchor</li><li>Personalization: use query history to suggest next research</li><li>Mobile as second habit trigger: complete the proactive loop</li></ul><div class="callout success"><div class="callout-title">Moat</div><p>Institutional knowledge lock-in: saved agents, grids, templates make switching catastrophically expensive</p></div></div></div></div><div><div class="card"><div class="card-header">Scenario B — GenAI is NOT driving habit <span class="pill neutral"><span class="pill warning">Scenario B</span></span></div><div class="card-body"><p>Signals: D30 retention gap narrows, novelty decay visible in cohort data</p><h3>Actions</h3><ul class="bullet"><li>Stop optimizing GenAI engagement volume — it doesn't predict retention</li><li>Diagnose which specific features do show retention signal</li><li>Invest in onboarding — the problem is activation, not the feature</li><li>Qualitative research: interview 20 churned users who tried GenAI</li><li>Re-examine pricing model: don't charge for features that don't retain</li></ul><div class="callout warning"><div class="callout-title">Moat</div><p>Traditional search moat remains; focus on workflow integration and data coverage depth</p></div></div></div></div></div><h3>Business Implications Regardless of Outcome</h3><div class="tbl-wrap"><table><thead><tr><th>Area</th><th>Implication</th></tr></thead><tbody><tr><td>Pricing architecture</td><td>If GenAI habit data shows measurable LTV lift, the platform earns the right to separate AI-tier pricing. Scheduled agents and Deep Research are strongest candidates — they deliver quantifiable analyst hour savings.</td></tr><tr><td>Platform vs point tool</td><td>The endgame is making AlphaSense the research infrastructure layer. Scheduled agents, Due Diligence Workspaces, and Enterprise Intelligence uploads make switching catastrophically expensive.</td></tr><tr><td>Persona-led roadmap</td><td>GenAI's WAU/DAU impact is almost certainly heterogeneous across roles. Sell-side analysts → Smart Summaries + Grid; buy-side PMs → Deep Research + Agents; deal teams → Due Diligence Workspace.</td></tr><tr><td>LTV and seat expansion model</td><td>Habit-formed users are the expansion vehicle. When an analyst makes AlphaSense indispensable, they advocate for more licenses. Track whether GenAI-activated users have higher 12-month seat expansion rates.</td></tr></tbody></table></div></div>
+
+</div>
+<script>
+function initTabs(containerId) {
+  var c = document.getElementById(containerId) || document;
+  c.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var group = btn.dataset.group;
+      c.querySelectorAll('.tab-btn[data-group="'+group+'"]').forEach(function(b){ b.classList.remove('active'); });
+      c.querySelectorAll('.tab-panel[data-group="'+group+'"]').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      var panel = c.querySelector('.tab-panel[data-group="'+group+'"][data-tab="'+btn.dataset.tab+'"]');
+      if(panel) panel.classList.add('active');
+    });
+  });
+}
+document.addEventListener('DOMContentLoaded', function() { initTabs(); });
+</script>
+</body>
+</html>

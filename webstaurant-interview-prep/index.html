@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WebstaurantStore Round 2 Prep</title>
+<style>
+:root {
+  --bg: #0f0f0f;
+  --bg2: #1a1a1a;
+  --bg3: #242424;
+  --border: #2e2e2e;
+  --text: #e8e8e8;
+  --text2: #a0a0a0;
+  --text3: #666;
+  --accent: #4f8ef7;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --neutral: #6b7280;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; line-height: 1.6; }
+.container { max-width: 1040px; margin: 0 auto; padding: 32px 24px; }
+h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+h2 { font-size: 18px; font-weight: 600; margin: 24px 0 10px; }
+h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; }
+p  { color: var(--text2); margin: 6px 0; }
+.subtitle { color: var(--text2); margin-bottom: 20px; }
+
+/* Tab nav */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 4px; }
+.tab-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px; background: transparent; color: var(--text2); cursor: pointer; font-size: 13px; transition: all .15s; }
+.tab-btn:hover { border-color: var(--accent); color: var(--text); }
+.tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+/* Cards */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; }
+.card-header { padding: 12px 16px; font-weight: 600; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.card-body { padding: 14px 16px; }
+.grid { display: grid; gap: 14px; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+@media(max-width:700px){ .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
+
+/* Callouts */
+.callout { border-left: 4px solid var(--neutral); background: var(--bg2); border-radius: 0 6px 6px 0; padding: 12px 14px; margin: 10px 0; }
+.callout-title { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.callout.success { border-color: var(--success); }
+.callout.warning { border-color: var(--warning); }
+.callout.danger  { border-color: var(--danger);  }
+.callout.info    { border-color: var(--info);    }
+.callout.success .callout-title { color: var(--success); }
+.callout.warning .callout-title { color: var(--warning); }
+.callout.danger  .callout-title { color: var(--danger);  }
+.callout.info    .callout-title { color: var(--info);    }
+
+/* Pills */
+.pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+.pill.success { background: rgba(34,197,94,.15); color: var(--success); }
+.pill.warning { background: rgba(245,158,11,.15); color: var(--warning); }
+.pill.danger  { background: rgba(239,68,68,.15);  color: var(--danger);  }
+.pill.info    { background: rgba(59,130,246,.15); color: var(--info);    }
+.pill.neutral { background: var(--bg3); color: var(--text2); }
+
+/* Stats */
+.stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+.stat-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; min-width: 130px; }
+.stat-value { font-size: 20px; font-weight: 700; }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* Tables */
+.tbl-wrap { overflow-x: auto; margin: 12px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: var(--bg3); color: var(--text2); font-weight: 600; padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+/* Code */
+pre, code { font-family: "JetBrains Mono", "Fira Code", monospace; font-size: 12px; }
+pre { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; overflow-x: auto; line-height: 1.7; color: var(--text); white-space: pre; margin: 10px 0; }
+
+/* Collapsible */
+details { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin: 6px 0; }
+summary { padding: 10px 14px; cursor: pointer; font-weight: 500; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+summary::after { content: "▸"; color: var(--text2); transition: transform .2s; }
+details[open] summary::after { transform: rotate(90deg); }
+details .details-body { padding: 12px 16px; border-top: 1px solid var(--border); }
+.tag { font-size: 11px; color: var(--text3); }
+ul.bullet { padding-left: 18px; }
+ul.bullet li { color: var(--text2); margin: 4px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>WebstaurantStore Round 2 Prep</h1>
+<p class="subtitle">Technical interview with Suraj — Colab notebook, SQL + Python + tools</p>
+<hr class="divider">
+<div class="tabs"><button class="tab-btn active" data-group="main" data-tab="intel">Interview Intel</button>
+<button class="tab-btn" data-group="main" data-tab="python">Python Topics</button>
+<button class="tab-btn" data-group="main" data-tab="sql">SQL Topics</button>
+<button class="tab-btn" data-group="main" data-tab="dayof">Day-Of Tips</button>
+</div>
+<hr class="divider">
+<div class="tab-panel active" data-group="main" data-tab="intel"><h2>Interview Intel</h2><div class="callout info"><div class="callout-title">Format (from Suraj's email)</div><p>Colab notebook shared live. SQL on made-up tables like their real ones. Python on data types, manipulation, best practices, numpy/pandas/sklearn. Resume tools (PowerBI, SAS) may be probed. Answers do not have to run — pseudocode is fine.</p></div><div class="grid grid-3"><div><div class="card"><div class="card-header">Colab notebook</div><div class="card-body"><p>They share a pre-written notebook with blanks or prompts. Start with comments so the structure is visible even if you get stuck on syntax. Run cells as you go — the interviewer can see.</p></div></div></div><div><div class="card"><div class="card-header">SQL on example data</div><div class="card-body"><p>Made-up tables resembling their real schema: accounts, orders, products, order_items. Expect joins, aggregations, window functions, data cleaning, and a model output table DDL question.</p></div></div></div><div><div class="card"><div class="card-header">Resume-driven deep dives</div><div class="card-body"><p>You listed numpy, pandas, sklearn, PowerBI, SAS. Any of these may be probed — including internals. Review anything you have not used recently.</p></div></div></div></div><h3>Question Distribution (InterviewQuery data)</h3><div class="tbl-wrap"><table><thead><tr><th>Category</th><th>Questions</th><th>Priority</th></tr></thead><tbody><tr><td>Data Structures & Algorithms</td><td>176</td><td><span class="pill warning">High</span></td></tr><tr><td>SQL</td><td>157</td><td><span class="pill warning">High</span></td></tr><tr><td>Machine Learning</td><td>120</td><td><span class="pill warning">High</span></td></tr><tr><td>Product Sense & Metrics</td><td>73</td><td><span class="pill info">Medium</span></td></tr><tr><td>Probability & Statistics</td><td>62</td><td><span class="pill info">Medium</span></td></tr></tbody></table></div></div>
+<div class="tab-panel" data-group="main" data-tab="python"><h2>Python Topics</h2><div class="callout warning"><div class="callout-title">Their Stated Python Scope</div><p>Data types, simple data manipulation, programming technique and best practices. Since your resume lists numpy, pandas, sklearn — they may dive into how those work.</p></div><h3>Data Types & Core Python</h3><details><summary>List vs Tuple vs Set vs Dict</summary><div class="details-body"><p>Mutability, ordering, lookup time. Set/dict membership is O(1); list is O(n).</p><pre># Mutable default argument — classic gotcha
+def bad(x, lst=[]):   # lst is SHARED across calls!
+    lst.append(x); return lst
+
+def good(x, lst=None):
+    if lst is None: lst = []
+    lst.append(x); return lst
+
+# Set for O(1) membership test
+seen = set()
+dupes = [x for x in values if x in seen or seen.add(x)]</pre></div></details><details><summary>List comprehensions & generator expressions</summary><div class="details-body"><p>Preferred over explicit loops. Generators are lazy — critical for large data.</p><pre># List comprehension
+evens = [x for x in range(100) if x % 2 == 0]
+
+# Generator expression (lazy, memory-efficient)
+evens_gen = (x for x in range(10_000_000) if x % 2 == 0)
+
+# Dict comprehension
+word_len = {w: len(w) for w in ['apple', 'banana', 'cherry']}</pre></div></details><details><summary>Exception handling & context managers</summary><div class="details-body"><pre>try:
+    df = pd.read_csv(path)
+except FileNotFoundError:
+    print('File not found: ' + path)
+except pd.errors.EmptyDataError:
+    print('CSV is empty')
+finally:
+    print('Done regardless')
+
+# Context manager — auto-closes the file
+with open('file.txt', 'r') as f:
+    data = f.read()</pre></div></details><h3>pandas (expect heavy emphasis)</h3><details><summary>Filtering & selection: .loc vs .iloc</summary><div class="details-body"><p>.loc is label-based (inclusive end). .iloc is integer-based (exclusive end). Boolean masks use & | ~ not 'and'.</p><pre># Boolean mask — use & | ~ not 'and' 'or' 'not'
+mask = (df['category'] == 'A') & (df['revenue'] > 500)
+df[mask]
+
+# .query() — cleaner syntax
+df.query("category == 'A' and revenue > 500")
+
+# .loc vs .iloc
+df.loc[0:3, 'revenue']   # rows 0-3 by LABEL (end inclusive)
+df.iloc[0:3, 2]          # first 3 rows by POSITION (end exclusive)</pre></div></details><details><summary>groupby + agg + transform</summary><div class="details-body"><p>agg() collapses groups to one row. transform() returns same length — perfect for features.</p><pre># Named aggregation
+df.groupby('segment').agg(
+    total_rev=('revenue', 'sum'),
+    avg_orders=('orders', 'mean'),
+    n_accounts=('account_id', 'nunique')
+)
+
+# transform() — same shape as original df
+df['seg_avg'] = df.groupby('segment')['revenue'].transform('mean')
+df['rev_vs_seg'] = df['revenue'] / df['seg_avg']  # ratio feature</pre></div></details><details><summary>Merging / joining DataFrames</summary><div class="details-body"><pre>result = pd.merge(
+    orders, customers,
+    left_on='customer_id', right_on='id',
+    how='left',
+    validate='m:1'   # raises error on accidental fanout
+)
+
+# After any join, verify shape didn't explode
+print('Before: %d, After: %d' % (len(orders), len(result)))</pre></div></details><details><summary>Apply vs vectorized operations</summary><div class="details-body"><pre># Vectorized (fast) — preferred
+df['new'] = df['a'] + df['b']
+
+# np.where — vectorized if-else
+import numpy as np
+df['flag'] = np.where(df['revenue'] > 1000, 'high', 'normal')
+
+# pd.cut — bin numeric into named categories
+df['tier'] = pd.cut(df['revenue'],
+                    bins=[0, 100, 1000, np.inf],
+                    labels=['low', 'med', 'high'])
+
+# apply — only when vectorized is not possible (slow)
+df['clean'] = df['text'].apply(lambda x: x.strip().lower())</pre></div></details><details><summary>Date/time operations</summary><div class="details-body"><pre>df['date'] = pd.to_datetime(df['date_str'])
+df['year']        = df['date'].dt.year
+df['month']       = df['date'].dt.month
+df['day_of_week'] = df['date'].dt.dayofweek  # 0=Monday
+
+# RFM recency feature
+df['days_since_order'] = (
+    pd.Timestamp.today() - df['last_order']
+).dt.days
+
+# Resample to weekly revenue
+weekly = df.set_index('date')['revenue'].resample('W').sum()</pre></div></details></div>
+<div class="tab-panel" data-group="main" data-tab="sql"><h2>SQL Topics</h2><div class="callout info"><div class="callout-title">Their Stated SQL Scope</div><p>How you pull data, combine tables, simple SQL tests for data problems, clean and prep data for a model, design a reasonable table to hold model output.</p></div><details><summary>Window functions (LAG, LEAD, DENSE_RANK)</summary><div class="details-body"><pre>-- 30-day retention cohort
+SELECT
+    account_id,
+    first_order_date,
+    DATE_TRUNC(first_order_date, MONTH) AS cohort_month,
+    COUNT(DISTINCT DATE_TRUNC(order_date, MONTH)) AS active_months
+FROM orders
+GROUP BY 1, 2, 3
+
+-- DENSE_RANK for percentile within segment
+SELECT
+    account_id,
+    revenue,
+    DENSE_RANK() OVER (PARTITION BY segment ORDER BY revenue DESC) AS rank_in_segment
+FROM accounts
+
+-- LAG: detect order gap (churn signal)
+SELECT
+    account_id,
+    order_date,
+    LAG(order_date) OVER (PARTITION BY account_id ORDER BY order_date) AS prev_order_date,
+    DATE_DIFF(order_date,
+              LAG(order_date) OVER (PARTITION BY account_id ORDER BY order_date),
+              DAY) AS days_since_last_order
+FROM orders</pre></div></details><details><summary>Anti-joins: accounts with no recent orders</summary><div class="details-body"><pre>-- Anti-join: accounts with no order in last 60 days
+SELECT a.account_id
+FROM accounts a
+LEFT JOIN orders o
+    ON a.account_id = o.account_id
+    AND o.order_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 60 DAY)
+WHERE o.order_id IS NULL
+
+-- Alternative with NOT EXISTS (often faster)
+SELECT account_id
+FROM accounts a
+WHERE NOT EXISTS (
+    SELECT 1 FROM orders o
+    WHERE o.account_id = a.account_id
+    AND o.order_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 60 DAY)
+)</pre></div></details><details><summary>RFM feature table</summary><div class="details-body"><pre>SELECT
+    account_id,
+    DATE_DIFF(CURRENT_DATE(), MAX(order_date), DAY)    AS recency_days,
+    COUNT(DISTINCT order_id)                           AS frequency,
+    SUM(revenue)                                       AS monetary_value,
+    COUNT(DISTINCT DATE_TRUNC(order_date, MONTH))      AS active_months,
+    COUNT(DISTINCT product_category)                   AS category_breadth,
+    DATE_DIFF(CURRENT_DATE(), MIN(order_date), DAY)    AS account_tenure_days
+FROM orders
+WHERE order_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 365 DAY)
+GROUP BY account_id</pre></div></details><details><summary>Model output table DDL</summary><div class="details-body"><pre>CREATE TABLE IF NOT EXISTS ds.churn_scores (
+    account_id       STRING NOT NULL,
+    score_date       DATE NOT NULL,
+    churn_prob       FLOAT64 NOT NULL,
+    churn_decile     INT64 NOT NULL,       -- 1=highest risk, 10=lowest
+    model_version    STRING NOT NULL,
+    top_feature_1    STRING,               -- SHAP top feature name
+    top_feature_2    STRING,
+    top_feature_3    STRING,
+    created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (account_id, score_date)
+);</pre></div></details><h3>Likely Schema They Will Use</h3><pre>accounts(account_id, name, segment,
+         membership_status, created_at)
+
+orders(order_id, account_id, order_date,
+       revenue, category, status)
+
+products(product_id, sku, department,
+         price, category)
+
+order_items(order_id, product_id,
+            qty, unit_price)</pre><h3>Likely Problem Types</h3><ul class="bullet"><li>Anti-join: accounts with no recent orders</li><li>RFM rollup: recency, frequency, monetary per account</li><li>Cohort retention: % still ordering M months later</li><li>Moving average revenue per account</li><li>Model output table DDL with audit columns</li><li>Data quality: null rates, dup PKs, negative revenue</li><li>Point-in-time feature table (no label leakage)</li></ul></div>
+<div class="tab-panel" data-group="main" data-tab="dayof"><h2>Day-Of Tips</h2><div class="callout success"><div class="callout-title">Core Philosophy (They Told You Explicitly)</div><p>Thinking out loud beats a silent right answer. Pseudocode beats buggy code. Asking the interviewers beats guessing and moving forward.</p></div><div class="tbl-wrap"><table><thead><tr><th>#</th><th>Tactic</th></tr></thead><tbody><tr><td>1</td><td>Start every problem with 2-3 comments outlining your approach before writing code</td></tr><tr><td>2</td><td>Name variables clearly — even in pseudocode (churn_rate not x)</td></tr><tr><td>3</td><td>Pause and ask if something is unclear — they grade communication</td></tr><tr><td>4</td><td>If you forget a function name, describe what it does ('there's a pandas function that groups and aggregates — something like groupby + agg')</td></tr><tr><td>5</td><td>State your assumptions explicitly ('I'm assuming order_date is a timestamp, not a string')</td></tr><tr><td>6</td><td>Mention edge cases even if you don't handle them ('I'd also check for NULL account_ids in production')</td></tr><tr><td>7</td><td>After writing SQL, narrate: 'this gives me one row per account with their RFM features'</td></tr><tr><td>8</td><td>For ML questions: frame → baseline → complexity. Never jump straight to the complex model.</td></tr></tbody></table></div><h3>Python Quick-Fire Q&A</h3><details><summary>What's the difference between a list and a tuple?</summary><div class="details-body"><p>Lists are mutable (you can change them). Tuples are immutable (fixed). Tuples are slightly faster and hashable (can be used as dict keys). Use tuples for data that shouldn't change.</p></div></details><details><summary>What's the difference between .loc and .iloc?</summary><div class="details-body"><p>.loc uses label-based indexing (column names, index labels). .iloc uses integer-based indexing (row 0, column 2). Both return slices — .loc is inclusive on both ends; .iloc excludes the end.</p></div></details><details><summary>What's the danger with fillna(method='ffill')?</summary><div class="details-body"><p>It propagates the last valid value forward. Fine for time series gaps, but can introduce leakage if applied to the full dataset before a temporal train/test split.</p></div></details><details><summary>Why is apply() slow?</summary><div class="details-body"><p>apply() runs a Python function on each row/element — no vectorization. Use numpy vectorized operations or pandas built-ins whenever possible. apply() is a last resort.</p></div></details><details><summary>What's the difference between merge() and join()?</summary><div class="details-body"><p>pd.merge() is flexible — merge on any columns, control how (inner/left/right/outer), handles duplicate column names. df.join() is a shortcut that merges on the index by default.</p></div></details></div>
+
+</div>
+<script>
+function initTabs(containerId) {
+  var c = document.getElementById(containerId) || document;
+  c.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var group = btn.dataset.group;
+      c.querySelectorAll('.tab-btn[data-group="'+group+'"]').forEach(function(b){ b.classList.remove('active'); });
+      c.querySelectorAll('.tab-panel[data-group="'+group+'"]').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      var panel = c.querySelector('.tab-panel[data-group="'+group+'"][data-tab="'+btn.dataset.tab+'"]');
+      if(panel) panel.classList.add('active');
+    });
+  });
+}
+document.addEventListener('DOMContentLoaded', function() { initTabs(); });
+</script>
+</body>
+</html>

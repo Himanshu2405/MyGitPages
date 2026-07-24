@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ML Models: When to Use Which</title>
+<style>
+:root {
+  --bg: #0f0f0f;
+  --bg2: #1a1a1a;
+  --bg3: #242424;
+  --border: #2e2e2e;
+  --text: #e8e8e8;
+  --text2: #a0a0a0;
+  --text3: #666;
+  --accent: #4f8ef7;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --neutral: #6b7280;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; line-height: 1.6; }
+.container { max-width: 1040px; margin: 0 auto; padding: 32px 24px; }
+h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+h2 { font-size: 18px; font-weight: 600; margin: 24px 0 10px; }
+h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; }
+p  { color: var(--text2); margin: 6px 0; }
+.subtitle { color: var(--text2); margin-bottom: 20px; }
+
+/* Tab nav */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 4px; }
+.tab-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px; background: transparent; color: var(--text2); cursor: pointer; font-size: 13px; transition: all .15s; }
+.tab-btn:hover { border-color: var(--accent); color: var(--text); }
+.tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+/* Cards */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; }
+.card-header { padding: 12px 16px; font-weight: 600; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.card-body { padding: 14px 16px; }
+.grid { display: grid; gap: 14px; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+@media(max-width:700px){ .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
+
+/* Callouts */
+.callout { border-left: 4px solid var(--neutral); background: var(--bg2); border-radius: 0 6px 6px 0; padding: 12px 14px; margin: 10px 0; }
+.callout-title { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.callout.success { border-color: var(--success); }
+.callout.warning { border-color: var(--warning); }
+.callout.danger  { border-color: var(--danger);  }
+.callout.info    { border-color: var(--info);    }
+.callout.success .callout-title { color: var(--success); }
+.callout.warning .callout-title { color: var(--warning); }
+.callout.danger  .callout-title { color: var(--danger);  }
+.callout.info    .callout-title { color: var(--info);    }
+
+/* Pills */
+.pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+.pill.success { background: rgba(34,197,94,.15); color: var(--success); }
+.pill.warning { background: rgba(245,158,11,.15); color: var(--warning); }
+.pill.danger  { background: rgba(239,68,68,.15);  color: var(--danger);  }
+.pill.info    { background: rgba(59,130,246,.15); color: var(--info);    }
+.pill.neutral { background: var(--bg3); color: var(--text2); }
+
+/* Stats */
+.stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+.stat-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; min-width: 130px; }
+.stat-value { font-size: 20px; font-weight: 700; }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* Tables */
+.tbl-wrap { overflow-x: auto; margin: 12px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: var(--bg3); color: var(--text2); font-weight: 600; padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+/* Code */
+pre, code { font-family: "JetBrains Mono", "Fira Code", monospace; font-size: 12px; }
+pre { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; overflow-x: auto; line-height: 1.7; color: var(--text); white-space: pre; margin: 10px 0; }
+
+/* Collapsible */
+details { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin: 6px 0; }
+summary { padding: 10px 14px; cursor: pointer; font-weight: 500; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+summary::after { content: "▸"; color: var(--text2); transition: transform .2s; }
+details[open] summary::after { transform: rotate(90deg); }
+details .details-body { padding: 12px 16px; border-top: 1px solid var(--border); }
+.tag { font-size: 11px; color: var(--text3); }
+ul.bullet { padding-left: 18px; }
+ul.bullet li { color: var(--text2); margin: 4px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>ML Models: When to Use Which</h1>
+<p class="subtitle">Plain-English decision guide — from supervised vs unsupervised down to picking a model and grading it</p>
+<hr class="divider">
+<div class="tabs"><button class="tab-btn active" data-group="main" data-tab="overview">Start Here</button>
+<button class="tab-btn" data-group="main" data-tab="supervised">Supervised</button>
+<button class="tab-btn" data-group="main" data-tab="unsupervised">Unsupervised</button>
+<button class="tab-btn" data-group="main" data-tab="eval">Evaluation</button>
+<button class="tab-btn" data-group="main" data-tab="pick">Pick a Model</button>
+<button class="tab-btn" data-group="main" data-tab="concepts">DS Concepts</button>
+</div>
+<hr class="divider">
+<div class="tab-panel active" data-group="main" data-tab="overview"><h2>The One Question That Decides Everything</h2><p>Before picking any model, ask: do I have the 'answers' (labels) in my data?</p><div class="tbl-wrap"><table><thead><tr><th></th><th>Supervised</th><th>Unsupervised</th></tr></thead><tbody><tr><td>Data has answers?</td><td>Yes (labeled)</td><td>No (unlabeled)</td></tr><tr><td>Goal</td><td>Predict a known target</td><td>Discover hidden patterns</td></tr><tr><td>You ask</td><td>What will happen?</td><td>What groups exist?</td></tr><tr><td>Examples</td><td>Churn, sales forecast, fraud</td><td>Segments, anomalies, basket analysis</td></tr><tr><td>Need a 'right answer' to grade it?</td><td>Yes</td><td>Not directly</td></tr></tbody></table></div><div class="callout info"><div class="callout-title">There's also a third family</div><p><strong>Reinforcement learning</strong> — model learns by trial and error from rewards (e.g. pricing bots, recommendations that learn from clicks). <strong>Semi-supervised</strong> — a few labels + lots of unlabeled data. Useful when labeling is expensive.</p></div></div>
+<div class="tab-panel" data-group="main" data-tab="supervised"><h2>Supervised Learning Models</h2><h3>Classification Models</h3><details><summary>Logistic Regression</summary><div class="details-body"><p><strong>What:</strong> Simple model that outputs a probability (0–100%) for yes/no questions.</p><p><strong>Use when:</strong> Fast, simple baseline; need to explain to stakeholders; fairly straightforward relationship.</p><p><strong>Example:</strong> Probability a customer churns this month.</p><p><strong>Watch out:</strong> Struggles with complex, non-linear patterns.</p></div></details><details><summary>Decision Tree</summary><div class="details-body"><p><strong>What:</strong> A flowchart of yes/no questions that leads to an answer.</p><p><strong>Use when:</strong> Very easy to read and explain; mix of number and category inputs.</p><p><strong>Example:</strong> Rules like 'no order in 30 days AND no loyalty points → likely to churn'.</p><p><strong>Watch out:</strong> A single tree overfits (memorizes) easily — use a forest instead.</p></div></details><details><summary>Random Forest</summary><div class="details-body"><p><strong>What:</strong> Many decision trees voting together for a more stable answer.</p><p><strong>Use when:</strong> Want strong accuracy without much tuning; need feature importance; medium tabular data.</p><p><strong>Example:</strong> Predict churn AND see top drivers: recency, spend drop, complaints.</p><p><strong>Watch out:</strong> Less interpretable than one tree; bigger and slower.</p></div></details><details><summary>XGBoost / Gradient Boosting</summary><div class="details-body"><p><strong>What:</strong> Trees built one after another, each fixing the previous one's mistakes.</p><p><strong>Use when:</strong> Want top accuracy on tabular data; can spend time tuning; common winner for churn, propensity, fraud.</p><p><strong>Example:</strong> Your SMS propensity model — XGBoost with SHAP for feature attribution.</p><p><strong>Watch out:</strong> Needs hyperparameter tuning; requires SHAP for interpretability.</p></div></details><h3>Regression Models</h3><details><summary>Linear Regression</summary><div class="details-body"><p><strong>What:</strong> Draws the best-fit line through data to predict a number.</p><p><strong>Use when:</strong> Predict a continuous number; want a fast, interpretable baseline; relationship is roughly linear.</p><p><strong>Watch out:</strong> Assumes linear relationship; sensitive to outliers; needs feature scaling.</p></div></details><details><summary>Ridge / Lasso Regression</summary><div class="details-body"><p><strong>What:</strong> Linear regression with a penalty that stops it from overcomplicating.</p><p><strong>Ridge (L2):</strong> Shrinks all coefficients toward zero. Keeps all features.</p><p><strong>Lasso (L1):</strong> Can set some coefficients exactly to zero — does feature selection automatically.</p><p><strong>Use when:</strong> Many features, some may be irrelevant; want regularization to prevent overfitting.</p></div></details></div>
+<div class="tab-panel" data-group="main" data-tab="unsupervised"><h2>Unsupervised Learning Models</h2><details><summary>K-Means Clustering</summary><div class="details-body"><p><strong>What:</strong> Groups data points into K clusters by minimizing distance to cluster centers.</p><p><strong>Use when:</strong> You want to discover customer segments without predefined categories; exploratory analysis.</p><p><strong>Example:</strong> Segment restaurant buyers into: casual/seasonal, bulk-buyer, premium-consistent.</p><p><strong>Watch out:</strong> You must choose K; sensitive to scale (normalize features first); assumes spherical clusters.</p></div></details><details><summary>PCA (Principal Component Analysis)</summary><div class="details-body"><p><strong>What:</strong> Reduces the number of features while keeping most of the information.</p><p><strong>Use when:</strong> Have many correlated features; want to visualize high-dimensional data; preprocessing for other models.</p><p><strong>Watch out:</strong> Loses interpretability — components are linear combinations of original features.</p></div></details><details><summary>Anomaly Detection</summary><div class="details-body"><p><strong>What:</strong> Flags unusual data points that don't fit the learned pattern.</p><p><strong>Use when:</strong> Fraud detection, system failure alerts, unusual account behavior.</p><p><strong>Methods:</strong> Isolation Forest, One-Class SVM, Z-score thresholds, autoencoder reconstruction error.</p></div></details></div>
+<div class="tab-panel" data-group="main" data-tab="eval"><h2>Model Evaluation Metrics</h2><h3>Classification Metrics</h3><div class="tbl-wrap"><table><thead><tr><th>Metric</th><th>Formula</th><th>Use When</th></tr></thead><tbody><tr><td>Accuracy</td><td>Correct predictions / Total predictions</td><td>Balanced classes — useless for imbalanced churn/fraud</td></tr><tr><td>Precision</td><td>TP / (TP + FP)</td><td>When false alarms are costly (spam filter, underwriting)</td></tr><tr><td>Recall (Sensitivity)</td><td>TP / (TP + FN)</td><td>When misses are costly (cancer screening, fraud detection)</td></tr><tr><td>F1 Score</td><td>2 × (Precision × Recall) / (Precision + Recall)</td><td>When you need a balance of precision and recall</td></tr><tr><td>AUC-ROC</td><td>Area under ROC curve</td><td>Comparing models regardless of threshold; best for ranking</td></tr><tr><td>PR-AUC</td><td>Area under Precision-Recall curve</td><td>When positive class is rare (<5%) — better than AUC-ROC</td></tr></tbody></table></div><h3>Key Concepts</h3><details><summary>Bias-Variance Tradeoff</summary><div class="details-body"><p><strong>Bias:</strong> Error from wrong assumptions. High bias = underfitting (model too simple to capture patterns).</p><p><strong>Variance:</strong> Error from sensitivity to training data. High variance = overfitting (model memorizes training data).</p><p><strong>Tradeoff:</strong> Increasing complexity reduces bias but increases variance. The sweet spot is where total error is minimized.</p><p><strong>Fix high bias:</strong> More complex model, add useful features, less regularization.</p><p><strong>Fix high variance:</strong> More data, simpler model, regularization, cross-validation.</p></div></details><details><summary>Precision vs Recall — When to Favor Each</summary><div class="details-body"><p><strong>Favor Precision when:</strong> False alarms are costly. Example: spam filter — don't accidentally block real email.</p><p><strong>Favor Recall when:</strong> Missing positives is costly. Example: cancer screening — never miss a case.</p><p><strong>F1</strong> is the harmonic mean — use when you need balance between the two.</p></div></details><details><summary>Cross-Validation</summary><div class="details-body"><p>k-fold: split data into k parts, train on k-1, test on the rest, rotate. Average the scores.</p><p>More reliable than a single train/test split. Helps detect overfitting and tune hyperparameters.</p><p><strong>For time-series data:</strong> Never use random k-fold — use time-based splits (walk-forward validation) to avoid leakage.</p></div></details><details><summary>Data Leakage</summary><div class="details-body"><p>When information from the future or the answer sneaks into training. Model looks amazing in testing but fails in production.</p><p><strong>Causes:</strong> Scaling before the split, using a feature that includes the target, temporal data not split properly.</p><p><strong>Fix:</strong> Split first, then fit transforms only on train data. For time-series: use strict temporal cutoff.</p><p><strong>Example:</strong> Using 'cancellation date' to predict churn — it already gives away the answer.</p></div></details></div>
+<div class="tab-panel" data-group="main" data-tab="pick"><h2>Model Selection Decision Guide</h2><div class="tbl-wrap"><table><thead><tr><th>Scenario</th><th>Recommended Model</th><th>Why</th></tr></thead><tbody><tr><td>Quick baseline for any classification problem</td><td>Logistic Regression</td><td>Fast, interpretable, good baseline</td></tr><tr><td>Tabular data, want maximum accuracy</td><td>XGBoost / LightGBM</td><td>Best-in-class for tabular; handles missing values</td></tr><tr><td>Need interpretability + accuracy</td><td>XGBoost + SHAP</td><td>Full prediction-level explanations</td></tr><tr><td>Many correlated features, need feature selection</td><td>Lasso Regression</td><td>L1 penalty zeros out irrelevant features</td></tr><tr><td>Want to find customer segments</td><td>K-Means Clustering</td><td>Standard segment discovery</td></tr><tr><td>Very high dimensionality, preprocessing</td><td>PCA then model</td><td>Reduce features while preserving variance</td></tr><tr><td>Imbalanced classes (fraud, churn)</td><td>XGBoost with scale_pos_weight</td><td>Built-in class weight support</td></tr><tr><td>High-stakes prediction, need calibrated probabilities</td><td>Calibrated XGBoost / Isotonic Regression</td><td>Probability outputs must match observed frequencies</td></tr></tbody></table></div></div>
+<div class="tab-panel" data-group="main" data-tab="concepts"><h2>DS Concepts Q&A</h2><details><summary>What is L1 vs L2 regularization?</summary><div class="details-body"><p>A penalty that stops the model from getting too complex. L1 (Lasso): can shrink some weights to zero → drops useless features. L2 (Ridge): shrinks weights smoothly toward zero, keeps all features. <strong>Rule:</strong> Lasso = selection (zeros out). Ridge = shrinks but keeps.</p></div></details><details><summary>Bagging vs Boosting</summary><div class="details-body"><p><strong>Bagging:</strong> Train many models in PARALLEL on random data samples, then average/vote. Mainly reduces VARIANCE (overfitting). Example: Random Forest.</p><p><strong>Boosting:</strong> Train models in SEQUENCE, each fixing the previous one's mistakes. Mainly reduces BIAS (accuracy). Example: XGBoost, AdaBoost.</p><p><strong>Remember:</strong> Bagging = parallel + vote (fix variance). Boosting = sequential + correct (fix bias).</p></div></details><details><summary>What is the p-value (in plain English)?</summary><div class="details-body"><p>Chance of seeing this result if there were really no effect. Small p-value (<0.05) → result is unlikely to be just luck. It does NOT prove the effect is large or important.</p></div></details><details><summary>Type I vs Type II error</summary><div class="details-body"><p><strong>Type I (false positive):</strong> Saying there's an effect when there isn't. <strong>Type II (false negative):</strong> Missing a real effect. <strong>Remember:</strong> Type I = crying wolf. Type II = missing the wolf.</p></div></details><details><summary>How do you handle imbalanced data?</summary><div class="details-body"><p><strong>Use the right metric:</strong> Precision, Recall, F1, AUC — not accuracy.</p><p><strong>Resample:</strong> Oversample the rare class (SMOTE) or undersample the common one.</p><p><strong>Class weights:</strong> Use scale_pos_weight so the model cares more about the rare class.</p><p><strong>Threshold:</strong> Adjust the decision threshold (not always 0.5).</p></div></details><details><summary>What is data leakage and how do you prevent it?</summary><div class="details-body"><p>When info from the future or the answer sneaks into training data. Model looks amazing in testing but fails in production. Fix: split first, then fit transforms only on train data.</p></div></details><details><summary>Parametric vs Non-Parametric Models</summary><div class="details-body"><p><strong>Parametric:</strong> Fixed number of parameters (linear/logistic regression). Faster, simpler.</p><p><strong>Non-parametric:</strong> Grow with data (KNN, decision trees). More flexible, need more data.</p></div></details></div>
+
+</div>
+<script>
+function initTabs(containerId) {
+  var c = document.getElementById(containerId) || document;
+  c.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var group = btn.dataset.group;
+      c.querySelectorAll('.tab-btn[data-group="'+group+'"]').forEach(function(b){ b.classList.remove('active'); });
+      c.querySelectorAll('.tab-panel[data-group="'+group+'"]').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      var panel = c.querySelector('.tab-panel[data-group="'+group+'"][data-tab="'+btn.dataset.tab+'"]');
+      if(panel) panel.classList.add('active');
+    });
+  });
+}
+document.addEventListener('DOMContentLoaded', function() { initTabs(); });
+</script>
+</body>
+</html>

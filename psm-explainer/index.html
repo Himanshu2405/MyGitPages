@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PSM Explainer — Propensity Score Matching</title>
+<style>
+:root {
+  --bg: #0f0f0f;
+  --bg2: #1a1a1a;
+  --bg3: #242424;
+  --border: #2e2e2e;
+  --text: #e8e8e8;
+  --text2: #a0a0a0;
+  --text3: #666;
+  --accent: #4f8ef7;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --neutral: #6b7280;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; line-height: 1.6; }
+.container { max-width: 1040px; margin: 0 auto; padding: 32px 24px; }
+h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+h2 { font-size: 18px; font-weight: 600; margin: 24px 0 10px; }
+h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; }
+p  { color: var(--text2); margin: 6px 0; }
+.subtitle { color: var(--text2); margin-bottom: 20px; }
+
+/* Tab nav */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 4px; }
+.tab-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px; background: transparent; color: var(--text2); cursor: pointer; font-size: 13px; transition: all .15s; }
+.tab-btn:hover { border-color: var(--accent); color: var(--text); }
+.tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+/* Cards */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; }
+.card-header { padding: 12px 16px; font-weight: 600; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.card-body { padding: 14px 16px; }
+.grid { display: grid; gap: 14px; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+@media(max-width:700px){ .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
+
+/* Callouts */
+.callout { border-left: 4px solid var(--neutral); background: var(--bg2); border-radius: 0 6px 6px 0; padding: 12px 14px; margin: 10px 0; }
+.callout-title { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.callout.success { border-color: var(--success); }
+.callout.warning { border-color: var(--warning); }
+.callout.danger  { border-color: var(--danger);  }
+.callout.info    { border-color: var(--info);    }
+.callout.success .callout-title { color: var(--success); }
+.callout.warning .callout-title { color: var(--warning); }
+.callout.danger  .callout-title { color: var(--danger);  }
+.callout.info    .callout-title { color: var(--info);    }
+
+/* Pills */
+.pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+.pill.success { background: rgba(34,197,94,.15); color: var(--success); }
+.pill.warning { background: rgba(245,158,11,.15); color: var(--warning); }
+.pill.danger  { background: rgba(239,68,68,.15);  color: var(--danger);  }
+.pill.info    { background: rgba(59,130,246,.15); color: var(--info);    }
+.pill.neutral { background: var(--bg3); color: var(--text2); }
+
+/* Stats */
+.stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+.stat-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; min-width: 130px; }
+.stat-value { font-size: 20px; font-weight: 700; }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* Tables */
+.tbl-wrap { overflow-x: auto; margin: 12px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: var(--bg3); color: var(--text2); font-weight: 600; padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+/* Code */
+pre, code { font-family: "JetBrains Mono", "Fira Code", monospace; font-size: 12px; }
+pre { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; overflow-x: auto; line-height: 1.7; color: var(--text); white-space: pre; margin: 10px 0; }
+
+/* Collapsible */
+details { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin: 6px 0; }
+summary { padding: 10px 14px; cursor: pointer; font-weight: 500; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+summary::after { content: "▸"; color: var(--text2); transition: transform .2s; }
+details[open] summary::after { transform: rotate(90deg); }
+details .details-body { padding: 12px 16px; border-top: 1px solid var(--border); }
+.tag { font-size: 11px; color: var(--text3); }
+ul.bullet { padding-left: 18px; }
+ul.bullet li { color: var(--text2); margin: 4px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>PSM Explainer — Propensity Score Matching</h1>
+<p class="subtitle">End-to-end guide: from defining treatment to sensitivity analysis. Includes Python code for every step.</p>
+<hr class="divider">
+<div class="tabs"><button class="tab-btn active" data-group="main" data-tab="overview">Overview</button>
+<button class="tab-btn" data-group="main" data-tab="steps">Step-by-Step</button>
+<button class="tab-btn" data-group="main" data-tab="methods">Methods</button>
+<button class="tab-btn" data-group="main" data-tab="code">Python Code</button>
+<button class="tab-btn" data-group="main" data-tab="assumptions">Assumptions</button>
+</div>
+<hr class="divider">
+<div class="tab-panel active" data-group="main" data-tab="overview"><h2>What is PSM?</h2><p>Propensity Score Matching (PSM) is a causal inference technique for estimating treatment effects from observational data — when randomized experiments are not possible.</p><div class="stats"><div class="stat-box"><div class="stat-value">e(X)</div><div class="stat-label">Propensity Score: P(T=1 | X)</div></div><div class="stat-box"><div class="stat-value">ATT</div><div class="stat-label">Primary estimand (treated units)</div></div><div class="stat-box"><div class="stat-value">< 0.1</div><div class="stat-label">Target SMD for balanced covariates</div></div><div class="stat-box"><div class="stat-value">0.2 × SD</div><div class="stat-label">Rosenbaum caliper rule (logit PS)</div></div></div><div class="grid grid-2"><div><div class="callout info"><div class="callout-title">What PSM Estimates</div><p>PSM typically estimates the ATT (Average Treatment Effect on the Treated): among users who were treated, what was the causal effect? This differs from ATE (effect on everyone).</p></div></div><div><div class="callout warning"><div class="callout-title">PSM is Not Magic</div><p>PSM removes bias from observed confounders only. If a key confounder is unmeasured, PSM cannot adjust for it. Always pair with sensitivity analysis.</p></div></div></div></div>
+<div class="tab-panel" data-group="main" data-tab="steps"><h2>Step-by-Step Guide</h2><div class="tbl-wrap"><table><thead><tr><th>Step</th><th>Title</th><th>Key Action</th><th>Watch Out</th></tr></thead><tbody><tr><td>01</td><td>Define Treatment & Outcome</td><td>Clearly specify binary treatment T and outcome Y. Must have a logical counterfactual.</td><td>None</td></tr><tr><td>02</td><td>Select Confounding Covariates</td><td>Identify variables X that predict treatment AND affect outcome. Omit post-treatment variables.</td><td>Never include variables measured after treatment starts — they are colliders that will bias your estimate.</td></tr><tr><td>03</td><td>Estimate Propensity Scores</td><td>Fit P(T=1|X) via logistic regression. Score matters more than predictive accuracy.</td><td>None</td></tr><tr><td>04</td><td>Check Common Support</td><td>Plot PS distributions for treated and control — they must substantially overlap.</td><td>If treated PS is concentrated near 1.0 and control near 0.0, you have near-separation. PSM will produce unreliable estimates.</td></tr><tr><td>05</td><td>Match Units</td><td>Pair each treated unit to control units with similar propensity score.</td><td>None</td></tr><tr><td>06</td><td>Assess Covariate Balance</td><td>Check SMD after matching. SMD < 0.1 = good balance.</td><td>None</td></tr><tr><td>07</td><td>Estimate Treatment Effect</td><td>On matched sample: ATT = mean(Y_treated) - mean(Y_matched_controls)</td><td>None</td></tr><tr><td>08</td><td>Sensitivity Analysis</td><td>Rosenbaum bounds: how strong must unmeasured confounder be to overturn result?</td><td>A significant PSM result can still be driven by unmeasured confounders. Sensitivity analysis is not optional for causal claims.</td></tr></tbody></table></div></div>
+<div class="tab-panel" data-group="main" data-tab="methods"><h2>Matching Methods Comparison</h2><div class="tbl-wrap"><table><thead><tr><th>Method</th><th>Mechanism</th><th>Caliper?</th><th>Pros</th><th>Cons</th><th>Best For</th></tr></thead><tbody><tr><td>1:1 Nearest Neighbor</td><td>Each treated unit matched to closest control by PS distance</td><td>No</td><td>Simple, easy to interpret</td><td>Poor matches if no close control exists</td><td>Large control pool with good PS overlap</td></tr><tr><td>NN + Caliper</td><td>NN matching; discard matches beyond 0.2 × SD of logit PS</td><td>Yes</td><td>Better match quality, eliminates bad matches</td><td>Reduces sample size; some treated units dropped</td><td>Default choice for most product analytics</td></tr><tr><td>K:1 Nearest Neighbor</td><td>Each treated unit matched to K controls (e.g. 1:3 or 1:5)</td><td>Optional</td><td>Uses more control data, reduces variance</td><td>Worse average match quality as K increases</td><td>Control pool is much larger than treated group</td></tr><tr><td>Radius / Within-Caliper</td><td>Match to all controls within a fixed PS distance band</td><td>Yes</td><td>Retains more information, weighted average</td><td>Variable number of matches per treated unit</td><td>Rich control pool; caliper width needs careful tuning</td></tr><tr><td>Kernel Matching</td><td>Weight all controls by kernel function of PS distance</td><td>Implicit</td><td>Uses entire control sample, lower variance</td><td>Harder to interpret; bandwidth choice matters</td><td>Large datasets; want SATT over a weighted sample</td></tr><tr><td>Optimal Matching</td><td>Minimizes total PS distance globally (linear assignment)</td><td>Optional</td><td>Globally optimal pairings; best average match quality</td><td>Computationally expensive for large n</td><td>Small-to-medium samples where compute is manageable</td></tr><tr><td>IPW (Inverse Probability Weighting)</td><td>Reweight: treated gets 1/PS, control gets 1/(1-PS)</td><td>No</td><td>No units dropped; estimates ATE not just ATT</td><td>Extreme weights from near-0 or near-1 PS can destabilize</td><td>Need ATE across entire population; use stabilized weights</td></tr></tbody></table></div><div class="callout success"><div class="callout-title">Recommended Default</div><p>Nearest Neighbor + Caliper (0.2 × SD of logit PS) — best balance of match quality, sample retention, and interpretability for most product analytics work. Pair with regression adjustment on the matched sample for additional bias reduction.</p></div></div>
+<div class="tab-panel" data-group="main" data-tab="code"><h2>Python Implementation</h2><h3>1. Propensity Score Estimation</h3><pre>from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+import numpy as np
+
+covariates = ['account_age_days', 'plan_tier_encoded',
+              'prior_sessions_30d', 'industry_encoded']
+
+X = df[covariates].values
+T = df['treatment'].values
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+lr = LogisticRegression(max_iter=1000, C=1.0)
+lr.fit(X_scaled, T)
+
+df['ps'] = lr.predict_proba(X_scaled)[:, 1]
+df['logit_ps'] = np.log(df['ps'] / (1 - df['ps']))</pre><h3>2. Caliper Matching</h3><pre>from sklearn.neighbors import NearestNeighbors
+
+# Rosenbaum & Rubin rule: caliper = 0.2 * SD(logit PS)
+caliper = 0.2 * df['logit_ps'].std()
+
+treated = df[df['T'] == 1].copy()
+control = df[df['T'] == 0].copy()
+
+ps_ctrl = control['logit_ps'].values.reshape(-1, 1)
+ps_trt  = treated['logit_ps'].values.reshape(-1, 1)
+
+nn = NearestNeighbors(n_neighbors=1, metric='euclidean')
+nn.fit(ps_ctrl)
+distances, indices = nn.kneighbors(ps_trt)
+
+# Drop treated units with no close match
+mask = distances.flatten() <= caliper
+treated_m = treated.iloc[mask].copy()
+control_m = control.iloc[indices.flatten()[mask]].copy()
+matched_df = pd.concat([treated_m, control_m])</pre><h3>3. Balance Check (SMD)</h3><pre>def standardized_mean_diff(df, covariates):
+    rows = []
+    for col in covariates:
+        t_vals = df.loc[df['T']==1, col]
+        c_vals = df.loc[df['T']==0, col]
+        mean_diff  = t_vals.mean() - c_vals.mean()
+        pooled_std = np.sqrt((t_vals.var() + c_vals.var()) / 2)
+        smd = mean_diff / pooled_std if pooled_std > 0 else float('nan')
+        rows.append({'covariate': col, 'SMD': smd,
+                     'balanced': abs(smd) < 0.1})
+    return pd.DataFrame(rows)
+
+smd_after = standardized_mean_diff(matched_df, covariates)
+# Check: all |SMD| < 0.1 post-match</pre><h3>4. ATT Estimation</h3><pre>from scipy import stats
+
+y_trt  = matched_df.loc[matched_df['T']==1, 'Y']
+y_ctrl = matched_df.loc[matched_df['T']==0, 'Y']
+
+att    = y_trt.mean() - y_ctrl.mean()
+t_stat, p_val = stats.ttest_ind(y_trt, y_ctrl)
+
+print(f'ATT:     {att:.4f}')
+print(f'p-value: {p_val:.4f}')</pre></div>
+<div class="tab-panel" data-group="main" data-tab="assumptions"><h2>Core Assumptions</h2><div class="tbl-wrap"><table><thead><tr><th>Assumption</th><th>What It Means</th><th>Testability</th></tr></thead><tbody><tr><td>Unconfoundedness (CIA)</td><td>Given observed covariates X, treatment T is independent of potential outcomes</td><td>Cannot be directly tested. Placebo test provides indirect evidence.</td></tr><tr><td>Overlap / Positivity</td><td>Every treated unit has a comparable control: 0 < P(T=1|X) < 1 for all X</td><td>Testable: plot PS distributions and check overlap</td></tr><tr><td>SUTVA — No Interference</td><td>One unit's treatment doesn't affect another's outcome</td><td>Partially testable: check for network effects or referral contamination</td></tr><tr><td>SUTVA — Single Version of Treatment</td><td>All treated units received the same treatment</td><td>Check: is treatment heterogeneous in intensity or type?</td></tr></tbody></table></div><h3>Common Pitfalls</h3><div class="tbl-wrap"><table><thead><tr><th>Pitfall</th><th>Severity</th><th>How to Avoid</th></tr></thead><tbody><tr><td>Including post-treatment variables as covariates</td><td><span class="pill danger">High</span></td><td>Only use pre-treatment covariates. Post-treatment variables are colliders that induce bias.</td></tr><tr><td>Not checking balance after matching</td><td><span class="pill danger">High</span></td><td>Always compute SMD for all covariates after matching. Balance is not guaranteed — verify it.</td></tr><tr><td>Ignoring common support violations</td><td><span class="pill danger">High</span></td><td>Drop treated units outside the control PS distribution. Never extrapolate.</td></tr><tr><td>Using PSM result without sensitivity analysis</td><td><span class="pill warning">Medium</span></td><td>Run Rosenbaum bounds or E-value. Report robustness to hidden bias.</td></tr><tr><td>Confusing ATT with ATE</td><td><span class="pill warning">Medium</span></td><td>PSM estimates ATT (effect on treated). If you need ATE, use IPW or AIPW.</td></tr><tr><td>Not calibrating the PS model</td><td><span class="pill neutral">Low</span></td><td>Check PS model calibration (predicted vs actual treatment rates). Miscalibrated PS model produces biased matches.</td></tr></tbody></table></div></div>
+
+</div>
+<script>
+function initTabs(containerId) {
+  var c = document.getElementById(containerId) || document;
+  c.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var group = btn.dataset.group;
+      c.querySelectorAll('.tab-btn[data-group="'+group+'"]').forEach(function(b){ b.classList.remove('active'); });
+      c.querySelectorAll('.tab-panel[data-group="'+group+'"]').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      var panel = c.querySelector('.tab-panel[data-group="'+group+'"][data-tab="'+btn.dataset.tab+'"]');
+      if(panel) panel.classList.add('active');
+    });
+  });
+}
+document.addEventListener('DOMContentLoaded', function() { initTabs(); });
+</script>
+</body>
+</html>

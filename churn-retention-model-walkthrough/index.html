@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Churn / Retention Model — End to End</title>
+<style>
+:root {
+  --bg: #0f0f0f;
+  --bg2: #1a1a1a;
+  --bg3: #242424;
+  --border: #2e2e2e;
+  --text: #e8e8e8;
+  --text2: #a0a0a0;
+  --text3: #666;
+  --accent: #4f8ef7;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --neutral: #6b7280;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; line-height: 1.6; }
+.container { max-width: 1040px; margin: 0 auto; padding: 32px 24px; }
+h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+h2 { font-size: 18px; font-weight: 600; margin: 24px 0 10px; }
+h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; }
+p  { color: var(--text2); margin: 6px 0; }
+.subtitle { color: var(--text2); margin-bottom: 20px; }
+
+/* Tab nav */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 4px; }
+.tab-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px; background: transparent; color: var(--text2); cursor: pointer; font-size: 13px; transition: all .15s; }
+.tab-btn:hover { border-color: var(--accent); color: var(--text); }
+.tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+/* Cards */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; }
+.card-header { padding: 12px 16px; font-weight: 600; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.card-body { padding: 14px 16px; }
+.grid { display: grid; gap: 14px; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+@media(max-width:700px){ .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
+
+/* Callouts */
+.callout { border-left: 4px solid var(--neutral); background: var(--bg2); border-radius: 0 6px 6px 0; padding: 12px 14px; margin: 10px 0; }
+.callout-title { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.callout.success { border-color: var(--success); }
+.callout.warning { border-color: var(--warning); }
+.callout.danger  { border-color: var(--danger);  }
+.callout.info    { border-color: var(--info);    }
+.callout.success .callout-title { color: var(--success); }
+.callout.warning .callout-title { color: var(--warning); }
+.callout.danger  .callout-title { color: var(--danger);  }
+.callout.info    .callout-title { color: var(--info);    }
+
+/* Pills */
+.pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+.pill.success { background: rgba(34,197,94,.15); color: var(--success); }
+.pill.warning { background: rgba(245,158,11,.15); color: var(--warning); }
+.pill.danger  { background: rgba(239,68,68,.15);  color: var(--danger);  }
+.pill.info    { background: rgba(59,130,246,.15); color: var(--info);    }
+.pill.neutral { background: var(--bg3); color: var(--text2); }
+
+/* Stats */
+.stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+.stat-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; min-width: 130px; }
+.stat-value { font-size: 20px; font-weight: 700; }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* Tables */
+.tbl-wrap { overflow-x: auto; margin: 12px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: var(--bg3); color: var(--text2); font-weight: 600; padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+/* Code */
+pre, code { font-family: "JetBrains Mono", "Fira Code", monospace; font-size: 12px; }
+pre { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; overflow-x: auto; line-height: 1.7; color: var(--text); white-space: pre; margin: 10px 0; }
+
+/* Collapsible */
+details { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin: 6px 0; }
+summary { padding: 10px 14px; cursor: pointer; font-weight: 500; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+summary::after { content: "▸"; color: var(--text2); transition: transform .2s; }
+details[open] summary::after { transform: rotate(90deg); }
+details .details-body { padding: 12px 16px; border-top: 1px solid var(--border); }
+.tag { font-size: 11px; color: var(--text3); }
+ul.bullet { padding-left: 18px; }
+ul.bullet li { color: var(--text2); margin: 4px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Churn / Retention Model — End to End</h1>
+<p class="subtitle">WebstaurantStore · Sr Data Scientist · ML Case Walkthrough — section-by-section interview script</p>
+<hr class="divider">
+<div class="tabs"><button class="tab-btn active" data-group="main" data-tab="spine">The Spine</button>
+<button class="tab-btn" data-group="main" data-tab="framing">Framing</button>
+<button class="tab-btn" data-group="main" data-tab="label">Label Def</button>
+<button class="tab-btn" data-group="main" data-tab="features">Features</button>
+<button class="tab-btn" data-group="main" data-tab="split">Split</button>
+<button class="tab-btn" data-group="main" data-tab="model">Model</button>
+<button class="tab-btn" data-group="main" data-tab="imbalance">Imbalance</button>
+<button class="tab-btn" data-group="main" data-tab="eval">Evaluation</button>
+<button class="tab-btn" data-group="main" data-tab="shap">SHAP</button>
+<button class="tab-btn" data-group="main" data-tab="prod">Production</button>
+</div>
+<hr class="divider">
+<div class="tab-panel active" data-group="main" data-tab="spine"><h2>The Spine — 16-Section Interview Script</h2><div class="callout info"><div class="callout-title">How to Use This</div><p>Each section gives the words to say, the questions to ask the interviewer, the reasoning behind every choice, and the follow-ups to expect. Navigate it the way you would drive the shared Google Doc.</p></div><div class="tbl-wrap"><table><thead><tr><th>Section</th><th>Key Message</th></tr></thead><tbody><tr><td>0 · The Spine</td><td>Frame the entire case before touching data — business goal first</td></tr><tr><td>1 · Business Framing</td><td>Ask clarifying questions: what does churn mean here? What's the cost?</td></tr><tr><td>2 · Business Context</td><td>B2B foodservice: restaurants cycle, seasonal patterns, bulk ordering</td></tr><tr><td>3 · Label Definition</td><td>Binary churn label; define the observation window carefully</td></tr><tr><td>4 · Feature Ideation</td><td>RFM + product breadth + order cadence + category mix</td></tr><tr><td>5 · EDA & Data Quality</td><td>Null rates, class imbalance, outliers, temporal consistency</td></tr><tr><td>6 · Seasonality</td><td>Restaurant seasonality affects RFM features and label timing</td></tr><tr><td>7 · Split & Leakage</td><td>Temporal train/test split — never use future data in training features</td></tr><tr><td>8 · Model Choice</td><td>XGBoost as baseline; logistic regression for interpretability check</td></tr><tr><td>9 · Hyperparameters</td><td>Grid search on max_depth, learning_rate, n_estimators, subsample</td></tr><tr><td>10 · Class Imbalance</td><td>Likely 5-15% churn rate; use scale_pos_weight or class weights</td></tr><tr><td>11 · Evaluation</td><td>AUC-ROC, Precision-Recall, F1; calibration curve for probability outputs</td></tr><tr><td>12 · SHAP & Decile</td><td>SHAP for feature attribution; decile lift chart for deployment planning</td></tr><tr><td>13 · Causal / A/B</td><td>From prediction to intervention: how do you validate the model drives action?</td></tr><tr><td>14 · Production</td><td>Batch scoring vs real-time; model drift monitoring; retraining cadence</td></tr><tr><td>15 · Python Code</td><td>End-to-end code walkthrough for each stage</td></tr><tr><td>16 · Follow-ups</td><td>Common follow-up questions and sharp answers</td></tr></tbody></table></div></div>
+<div class="tab-panel" data-group="main" data-tab="framing"><h2>1 · Business Framing</h2><div class="callout warning"><div class="callout-title">Questions I ask first</div><ul class="bullet"><li>What does 'churn' mean here — no order in 30 days? 60 days? Account closure?</li><li>What's the business use case — retention outreach, inventory planning, or something else?</li><li>Is the goal to predict churn probability or rank accounts by churn risk?</li><li>What actions will be taken on model output? (This shapes threshold choice)</li><li>Do you have a sense of the cost of a false positive vs a false negative?</li></ul></div><div class="callout neutral"><div class="callout-title">Talk Track</div><p><em>"Before I start building features or picking a model, I want to understand the business problem. For a B2B foodservice company like WebstaurantStore, 'churn' could mean several things — a restaurant that closes, a customer who switched to a competitor, or just an account that went dormant for a season. Each has a different label definition, prediction window, and intervention strategy. Can we nail down which one we're solving for?"</em></p></div><div class="grid grid-2"><div><div class="card"><div class="card-header">If churn = no order in 60 days</div><div class="card-body"><p>This is a behavioral churn model. Label = 1 if no order in the next 60 days. Feature window = last 12 months. Train on historical cohorts with enough post-period data.</p></div></div></div><div><div class="card"><div class="card-header">If churn = account closure / cancellation</div><div class="card-body"><p>Harder to predict — need a signal that precedes the closure event. Declining order frequency, shrinking basket size, category concentration are leading indicators.</p></div></div></div></div></div>
+<div class="tab-panel" data-group="main" data-tab="label"><h2>3 · Label Definition</h2><div class="callout warning"><div class="callout-title">The Most Important Decision</div><p>The label definition is the most consequential design choice. A bad label makes everything else irrelevant.</p></div><div class="tbl-wrap"><table><thead><tr><th>Label Option</th><th>Definition</th><th>Pros</th><th>Cons</th><th>Use When</th></tr></thead><tbody><tr><td>No order in 60 days</td><td>Binary: 1 if customer has zero orders in the 60 days following the observation date</td><td>Clear, measurable, actionable</td><td>Seasonal restaurants may look churned but are just in off-season</td><td>Consistent-order businesses</td></tr><tr><td>No order in 90 days</td><td>Binary: 1 if no orders in 90-day window</td><td>More robust to short gaps</td><td>Slower signal — you're predicting something that takes longer to confirm</td><td>Businesses with monthly+ order cadence</td></tr><tr><td>Decline in order frequency</td><td>Continuous: % decline in order frequency vs same period last year</td><td>Captures at-risk before churn</td><td>Harder to threshold; more complex model</td><td>Early warning system</td></tr><tr><td>Off-cadence order</td><td>Binary: 1 if order arrives more than 1.5x the user's typical inter-order interval</td><td>Personalizes the label to each customer's baseline</td><td>Requires per-customer baseline calculation</td><td>B2B with regular reorder patterns</td></tr></tbody></table></div><div class="callout success"><div class="callout-title">Recommended for WebstaurantStore</div><p>Off-cadence label design: each customer has a typical reorder interval (e.g., a restaurant that orders every 14 days). Label = 1 if their next order arrives more than 1.5x their baseline interval. This personalizes churn detection and accounts for seasonal restaurants whose 60-day gap in January is normal, not churned.</p></div></div>
+<div class="tab-panel" data-group="main" data-tab="features"><h2>4 · Feature Ideation</h2><div class="tbl-wrap"><table><thead><tr><th>Feature Category</th><th>Examples</th><th>Why It Matters</th><th>Leakage Risk</th></tr></thead><tbody><tr><td>Recency (R)</td><td>Days since last order, days since last login</td><td>Most predictive single feature for churn timing</td><td>Use observation date as cutoff — no post-period data</td></tr><tr><td>Frequency (F)</td><td>Orders per 30/60/90 days, order count trend (slope)</td><td>Declining frequency = leading indicator of churn</td><td>Trend calculation must end at observation date</td></tr><tr><td>Monetary (M)</td><td>Average order value, total LTM revenue, revenue trend</td><td>High-value customers may tolerate gaps; low-value churn fast</td><td>Use only pre-period revenue</td></tr><tr><td>Product Breadth</td><td># unique categories ordered, # unique SKUs, category concentration (Herfindahl)</td><td>Customers with broad product adoption are harder to replace on a competitor</td><td>Calculate over pre-period window only</td></tr><tr><td>Order Cadence</td><td>Typical inter-order interval, variance in order timing, # weekend orders</td><td>Irregular cadence = early churn signal; very regular = loyal</td><td>No post-period order timing</td></tr><tr><td>Account Metadata</td><td>Account age (tenure), business type (restaurant vs catering vs bakery), membership status</td><td>Tenure is a strong confounder for churn; newer accounts churn faster</td><td>Static at observation date</td></tr><tr><td>Support / Complaints</td><td># support tickets in last 60 days, complaint resolution time, return rate</td><td>High complaint volume predicts churn regardless of order frequency</td><td>Use pre-period support data</td></tr><tr><td>Category Mix Change</td><td>Shift in % of revenue from core category vs adjacent categories</td><td>Category drift = customer exploring alternatives</td><td>YoY category mix comparison, pre-period</td></tr></tbody></table></div><div class="callout warning"><div class="callout-title">Temporal Leakage — The Most Common Mistake</div><p>Features like 'days since last order' must be calculated relative to the observation date, not the current date. If your observation date is 2024-01-01, your features must use only data from before 2024-01-01. Including any data from after that date is temporal leakage.</p></div></div>
+<div class="tab-panel" data-group="main" data-tab="split"><h2>7 · Train/Test Split & Temporal Leakage</h2><div class="callout danger"><div class="callout-title">NEVER use random split for time-series data</div><p>Random split leaks future information into training. A customer who churned in June could have their 'days since last order' feature calculated using July data, which your model would never have in production.</p></div><div class="tbl-wrap"><table><thead><tr><th>Split Method</th><th>Description</th><th>When to Use</th></tr></thead><tbody><tr><td>Temporal cutoff</td><td>Train on cohorts before date X; test on cohorts after date X</td><td>Standard for churn models with a defined prediction horizon</td></tr><tr><td>Walk-forward validation</td><td>Multiple train/test windows rolling forward in time</td><td>Better estimate of production performance; catches model drift</td></tr><tr><td>Hold-out by account cohort</td><td>Train on accounts that joined before year Y; test on accounts from year Y+</td><td>Tests generalization to new accounts (more realistic for B2B)</td></tr></tbody></table></div><h3>The SHA512-NTILE Trick</h3><div class="callout info"><div class="callout-title">Deterministic Stratified Split</div><p>Hash each account ID with SHA-512, then take the last N digits as a percentile bucket. Assign buckets 0-79 to train, 80-89 to validation, 90-99 to test. This produces a deterministic, reproducible split that is stable across reruns — even if new accounts are added, old accounts stay in their original split bucket. This prevents data leakage from re-randomization and ensures reproducibility.</p></div></div>
+<div class="tab-panel" data-group="main" data-tab="model"><h2>8 · Model Choice</h2><div class="tbl-wrap"><table><thead><tr><th>Model</th><th>When to Start Here</th><th>Pros</th><th>Cons</th></tr></thead><tbody><tr><td>Logistic Regression</td><td>Always — use as baseline</td><td>Interpretable, fast, provides probability calibration baseline</td><td>Linear decision boundary; struggles with feature interactions</td></tr><tr><td>Random Forest</td><td>When LR performance is poor and you need feature importance</td><td>Handles non-linearities; built-in feature importance; robust to outliers</td><td>Slower than LR; harder to calibrate probabilities</td></tr><tr><td>XGBoost / LightGBM</td><td>Default choice for tabular churn data</td><td>Best accuracy on tabular data; handles missing values; fast with GPU</td><td>Requires hyperparameter tuning; harder to explain without SHAP</td></tr><tr><td>SHAP + XGBoost</td><td>Production model</td><td>Full interpretability at prediction-level; can explain individual accounts</td><td>Slight inference overhead for SHAP computation</td></tr></tbody></table></div><div class="callout success"><div class="callout-title">Recommended Stack for WebstaurantStore</div><p>Logistic Regression as baseline → XGBoost as primary model → SHAP for interpretability. If the LR AUC and XGBoost AUC are within 0.02, deploy LR — simpler, more defensible, easier to debug. Only deploy XGBoost complexity when it delivers measurable lift.</p></div></div>
+<div class="tab-panel" data-group="main" data-tab="imbalance"><h2>10 · Class Imbalance</h2><div class="callout info"><div class="callout-title">Expected Imbalance</div><p>B2B churn rates are typically 5-20%. A 10% churn rate means 90% of training examples are non-churn. A model that always predicts 'no churn' gets 90% accuracy but 0% recall on churners.</p></div><div class="tbl-wrap"><table><thead><tr><th>Technique</th><th>How It Works</th><th>When to Use</th><th>Tradeoff</th></tr></thead><tbody><tr><td>Class weights (scale_pos_weight)</td><td>Multiply the loss for positive class by a weight proportional to class imbalance</td><td>Always try first — no information loss</td><td>Doesn't generate new data; may still underperform on very imbalanced classes</td></tr><tr><td>SMOTE (oversampling)</td><td>Synthetically generate minority class examples by interpolating between existing ones</td><td>When class weights don't produce enough recall improvement</td><td>Can generate unrealistic examples; should only be applied to training set, never test</td></tr><tr><td>Undersampling majority</td><td>Randomly remove majority class examples to balance the ratio</td><td>When training data is very large and compute is constrained</td><td>Discards potentially useful data</td></tr><tr><td>Threshold adjustment</td><td>Move the classification threshold below 0.5 to catch more churners</td><td>After training — tune on validation set</td><td>Increases false positives; find the threshold that maximizes F1 or minimizes business cost</td></tr></tbody></table></div><div class="callout warning"><div class="callout-title">Evaluation Metric Warning</div><p>Never use accuracy to evaluate an imbalanced model. Use AUC-ROC (overall ranking ability), Precision-Recall AUC (captures performance on the minority class), and F1 at your chosen threshold.</p></div></div>
+<div class="tab-panel" data-group="main" data-tab="eval"><h2>11 · Evaluation</h2><div class="tbl-wrap"><table><thead><tr><th>Metric</th><th>What It Measures</th><th>Churn Model Use</th></tr></thead><tbody><tr><td>AUC-ROC</td><td>How well the model ranks churners above non-churners across all thresholds</td><td>Primary model comparison metric; threshold-independent</td></tr><tr><td>Precision-Recall AUC</td><td>Performance specifically on the minority (churn) class</td><td>Better than AUC-ROC when churn is very rare (<5%)</td></tr><tr><td>F1 at chosen threshold</td><td>Harmonic mean of precision and recall at a specific operating point</td><td>Use after choosing the deployment threshold based on business cost</td></tr><tr><td>Calibration curve (reliability diagram)</td><td>Do predicted probabilities match observed frequencies?</td><td>Critical if model output is used to rank intervention priority (not just classify)</td></tr><tr><td>Lift / Decile chart</td><td>How much better than random is the model at each decile of predicted probability?</td><td>Shows the business value of the model's ranking — most actionable for sales outreach</td></tr></tbody></table></div><h3>Lift Chart Interpretation</h3><div class="callout neutral"><div class="callout-title">Reading a Decile Lift Chart</div><p>Sort accounts by predicted churn probability (highest first). Split into 10 equal buckets (deciles). Compute the actual churn rate in each decile. If the top decile has 4x the baseline churn rate, your model has a lift of 4x — you can focus retention outreach on 10% of accounts and capture 40% of churners.</p></div></div>
+<div class="tab-panel" data-group="main" data-tab="shap"><h2>12 · SHAP & Feature Attribution</h2><div class="callout info"><div class="callout-title">Why SHAP over Feature Importances</div><p>Feature importances tell you which features are globally important to the model. SHAP values tell you exactly how each feature contributed to a specific prediction. For a churn model, you can tell a sales rep: 'This account is at high risk primarily because their order frequency dropped 40% over the last 60 days and they haven't ordered from their core category in 3 weeks.'</p></div><div class="tbl-wrap"><table><thead><tr><th>SHAP Output</th><th>What It Shows</th><th>Business Application</th></tr></thead><tbody><tr><td>Summary plot (beeswarm)</td><td>Global feature importance + direction of effect for all predictions</td><td>Identify which features most drive churn predictions across all accounts</td></tr><tr><td>Waterfall plot (single prediction)</td><td>How each feature pushes a specific account above or below the base rate</td><td>Sales rep explanation: 'why is this account flagged?'</td></tr><tr><td>Dependence plot</td><td>How SHAP value for one feature changes with feature value, and interaction effects</td><td>Identify thresholds (e.g., 'recency > 45 days = sharp SHAP increase')</td></tr><tr><td>Force plot</td><td>Visualization of all features pushing prediction up or down for one account</td><td>Client-facing explanation of model recommendation</td></tr></tbody></table></div></div>
+<div class="tab-panel" data-group="main" data-tab="prod"><h2>14 · Production</h2><div class="tbl-wrap"><table><thead><tr><th>Decision</th><th>Option A</th><th>Option B</th><th>Recommendation</th></tr></thead><tbody><tr><td>Scoring cadence</td><td>Weekly batch scoring (BigQuery/BQ ML)</td><td>Real-time scoring (API endpoint)</td><td>Weekly batch is sufficient for churn — accounts don't churn within hours</td></tr><tr><td>Feature pipeline</td><td>Pre-computed features in BQ tables</td><td>Real-time feature computation</td><td>Pre-compute in BQ; simpler, cheaper, auditable</td></tr><tr><td>Model registry</td><td>MLflow / Vertex AI Model Registry</td><td>Custom database</td><td>MLflow for experiment tracking; Vertex AI for production serving</td></tr><tr><td>Drift monitoring</td><td>Monitor input feature distributions weekly</td><td>Monitor prediction distribution only</td><td>Monitor both: feature drift and prediction drift</td></tr><tr><td>Retraining trigger</td><td>Time-based (monthly retrain)</td><td>Performance-based (when AUC drops)</td><td>Both: monthly retrain + alert if AUC drops >0.03 vs. baseline</td></tr></tbody></table></div><div class="callout success"><div class="callout-title">Production Readiness Checklist</div><ul class="bullet"><li>Temporal train/test split validates production scenario</li><li>SHAP explanations built into the output table for each scored account</li><li>Model card documenting: intended use, training data, known limitations, fairness considerations</li><li>Drift monitoring alert on feature distributions and prediction distribution</li><li>Retraining pipeline tested end-to-end before deployment</li></ul></div></div>
+
+</div>
+<script>
+function initTabs(containerId) {
+  var c = document.getElementById(containerId) || document;
+  c.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var group = btn.dataset.group;
+      c.querySelectorAll('.tab-btn[data-group="'+group+'"]').forEach(function(b){ b.classList.remove('active'); });
+      c.querySelectorAll('.tab-panel[data-group="'+group+'"]').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      var panel = c.querySelector('.tab-panel[data-group="'+group+'"][data-tab="'+btn.dataset.tab+'"]');
+      if(panel) panel.classList.add('active');
+    });
+  });
+}
+document.addEventListener('DOMContentLoaded', function() { initTabs(); });
+</script>
+</body>
+</html>

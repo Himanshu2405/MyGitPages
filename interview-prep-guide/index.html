@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Interview Prep Guide</title>
+<style>
+:root {
+  --bg: #0f0f0f;
+  --bg2: #1a1a1a;
+  --bg3: #242424;
+  --border: #2e2e2e;
+  --text: #e8e8e8;
+  --text2: #a0a0a0;
+  --text3: #666;
+  --accent: #4f8ef7;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --neutral: #6b7280;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; line-height: 1.6; }
+.container { max-width: 1040px; margin: 0 auto; padding: 32px 24px; }
+h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+h2 { font-size: 18px; font-weight: 600; margin: 24px 0 10px; }
+h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; }
+p  { color: var(--text2); margin: 6px 0; }
+.subtitle { color: var(--text2); margin-bottom: 20px; }
+
+/* Tab nav */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 4px; }
+.tab-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px; background: transparent; color: var(--text2); cursor: pointer; font-size: 13px; transition: all .15s; }
+.tab-btn:hover { border-color: var(--accent); color: var(--text); }
+.tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+/* Cards */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; }
+.card-header { padding: 12px 16px; font-weight: 600; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.card-body { padding: 14px 16px; }
+.grid { display: grid; gap: 14px; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+@media(max-width:700px){ .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
+
+/* Callouts */
+.callout { border-left: 4px solid var(--neutral); background: var(--bg2); border-radius: 0 6px 6px 0; padding: 12px 14px; margin: 10px 0; }
+.callout-title { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.callout.success { border-color: var(--success); }
+.callout.warning { border-color: var(--warning); }
+.callout.danger  { border-color: var(--danger);  }
+.callout.info    { border-color: var(--info);    }
+.callout.success .callout-title { color: var(--success); }
+.callout.warning .callout-title { color: var(--warning); }
+.callout.danger  .callout-title { color: var(--danger);  }
+.callout.info    .callout-title { color: var(--info);    }
+
+/* Pills */
+.pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+.pill.success { background: rgba(34,197,94,.15); color: var(--success); }
+.pill.warning { background: rgba(245,158,11,.15); color: var(--warning); }
+.pill.danger  { background: rgba(239,68,68,.15);  color: var(--danger);  }
+.pill.info    { background: rgba(59,130,246,.15); color: var(--info);    }
+.pill.neutral { background: var(--bg3); color: var(--text2); }
+
+/* Stats */
+.stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+.stat-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; min-width: 130px; }
+.stat-value { font-size: 20px; font-weight: 700; }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* Tables */
+.tbl-wrap { overflow-x: auto; margin: 12px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: var(--bg3); color: var(--text2); font-weight: 600; padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+/* Code */
+pre, code { font-family: "JetBrains Mono", "Fira Code", monospace; font-size: 12px; }
+pre { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; overflow-x: auto; line-height: 1.7; color: var(--text); white-space: pre; margin: 10px 0; }
+
+/* Collapsible */
+details { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin: 6px 0; }
+summary { padding: 10px 14px; cursor: pointer; font-weight: 500; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+summary::after { content: "▸"; color: var(--text2); transition: transform .2s; }
+details[open] summary::after { transform: rotate(90deg); }
+details .details-body { padding: 12px 16px; border-top: 1px solid var(--border); }
+.tag { font-size: 11px; color: var(--text3); }
+ul.bullet { padding-left: 18px; }
+ul.bullet li { color: var(--text2); margin: 4px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Interview Prep Guide</h1>
+<p class="subtitle">Senior DS / PA interview preparation — 7 companies, priority roadmap, story bank, and behavioral Q&A</p>
+<hr class="divider">
+<div class="tabs"><button class="tab-btn active" data-group="main" data-tab="roadmap">Priority Roadmap</button>
+<button class="tab-btn" data-group="main" data-tab="companies">By Company</button>
+<button class="tab-btn" data-group="main" data-tab="stories">Story Bank</button>
+<button class="tab-btn" data-group="main" data-tab="behavioral">Behavioral / HR</button>
+</div>
+<hr class="divider">
+<div class="tab-panel active" data-group="main" data-tab="roadmap"><h2>Priority Roadmap</h2><div class="callout info"><div class="callout-title">Summary</div><p>SQL is already advanced — de-prioritize it. Lead with behavioral stories (unlocks all rounds) then product sense frameworks (tested at all 7 companies). ML fundamentals are the biggest gap for Senior DS roles at Google, Microsoft, Klaviyo, and ServiceNow.</p></div><div class="stats"><div class="stat-box"><div class="stat-value">7</div><div class="stat-label">Target Companies</div></div><div class="stat-box"><div class="stat-value">Senior DS / PA</div><div class="stat-label">Target Roles</div></div><div class="stat-box"><div class="stat-value">3-4 weeks</div><div class="stat-label">Prep Horizon</div></div><div class="stat-box"><div class="stat-value">Lowest</div><div class="stat-label">SQL Priority</div></div></div><div class="card"><div class="card-header">1. Behavioral / HR Stories</div><div class="card-body"><span class="pill success">2-3 days</span><p>Every company starts here. Your project portfolio is exceptional — you just need 8–10 crisp STAR stories pre-built so you're not inventing them live.</p><ul class="bullet"><li>Write stories for: SMS Cross-Sell ($2.3M), PSM Study (76% lift), Propensity Model ($500K), AskData Bot, JustAnswer retention (+11%)</li><li>Prepare for: biggest failure/lesson, disagreement with stakeholder, ambiguous project, end-to-end ownership, influencing without authority</li><li>Prep 'Why this company' answers for each target — research their recent product launches first</li></ul></div></div><div class="card"><div class="card-header">2. Product Sense + Metrics Frameworks</div><div class="card-body"><span class="pill success">3-4 days</span><p>All 7 companies test product sense. Your instincts are strong from SMS work, but you need a repeatable framework you can run in real time — not just project recall.</p><ul class="bullet"><li>Master the metric drop framework: segment → external vs internal → leading indicators → funnel step → A/B test hypothesis</li><li>Practice 'define success metrics for X' for messaging platforms, CRM tools, marketing automation, subscription SaaS</li><li>Drill: North Star vs supporting vs guardrail metrics — why each one exists</li><li>Practice out loud: 'SMS engagement dropped 15% — what do you do?' using your actual SMS funnel knowledge</li></ul></div></div><div class="card"><div class="card-header">3. Experimentation / Stats</div><div class="card-body"><span class="pill success">2 days</span><p>Bayesian A/B, PSM, AIPW, DiD — you've done all of it. The gap is explaining these cleanly to a non-technical interviewer.</p><ul class="bullet"><li>Prep a 90-second explanation of Bayesian vs frequentist A/B testing (why you prefer Bayesian for early stopping)</li><li>Know: p-value vs posterior probability, Type I/II errors, power, MDE — explain each in plain English</li><li>Practice the 'metric is up — was it causal?' question using your PSM study as the answer</li><li>Be ready for: 'How would you design an A/B test for feature X?' — use your SMS cross-sell experiment as a template</li></ul></div></div><div class="card"><div class="card-header">4. ML / DS Fundamentals</div><div class="card-body"><span class="pill warning">3-4 days</span><p>Google, Microsoft, ServiceNow, and Klaviyo will probe ML depth. Your XGBoost/LightGBM work is strong, but expect questions on model internals, regularization, and class imbalance.</p><ul class="bullet"><li>Review: bias-variance tradeoff, regularization (L1 vs L2), tree-based model internals (XGBoost vs LightGBM vs RF)</li><li>Class imbalance: SMOTE, class weights, downsampling — you used downsampling in the propensity model, know the tradeoffs</li><li>Know your model choices: 'Why XGBoost vs logistic regression for propensity?' — have a crisp answer</li><li>SHAP: you used it in the churn model — explain SHAP values vs feature importances and why SHAP is better</li><li>Review: cross-validation, train/test leakage, and why your SHA512-NTILE split was the right call</li></ul></div></div><div class="card"><div class="card-header">5. SQL Live Assessment</div><div class="card-body"><span class="pill success">1 day</span><p>You're already advanced. The only gap is interview-speed SQL — writing window functions under pressure without IDE autocomplete.</p><ul class="bullet"><li>Practice 5–10 medium problems on StrataScratch (product-analytics style, not algorithmic)</li><li>Refresh: LAG/LEAD, DENSE_RANK, self-joins for retention cohorts, funnel step analysis</li><li>Practice writing a DAU/WAU/MAU query and a 30-day retention cohort query from memory</li></ul></div></div></div>
+<div class="tab-panel" data-group="main" data-tab="companies"><h2>By Company</h2><div class="tbl-wrap"><table><thead><tr><th>Company</th><th>Role</th><th>Comp Range</th><th>Top Focus</th><th>Your Edge</th><th>Watch Out</th></tr></thead><tbody><tr><td>Google</td><td>Senior DS (L5/L6)</td><td>$295K–$351K total</td><td>Causal inference depth (AIPW, PSM), Bayesian A/B testing, ML system design</td><td>Bayesian experimentation + PSM + AIPW work is directly what Google probes at L5/L6. AskData Bot (Gemini 2.5 Pro on Vertex AI) shows ML engineering depth.</td><td>Google L5/L6 is rigorous on ML theory. Refresh model internals before the ML round.</td></tr><tr><td>Microsoft</td><td>Senior DS</td><td>$180K–$250K base</td><td>Defining ambiguous problems, connecting analysis to product impact, cross-functional influence</td><td>Microsoft values DS who drive product decisions — your $2.3M SMS experiment and semantic layer work are perfect proof points.</td><td>Microsoft weights behavioral performance heavily. Have 5+ STAR stories ready.</td></tr><tr><td>Salesforce</td><td>Senior DS / Senior PA</td><td>$170K–$240K base</td><td>V2MOM framework alignment, Ohana culture fit, marketing automation product sense (CRM)</td><td>Your marketing automation work at Mailchimp (SMS, email) maps perfectly to Salesforce Marketing Cloud context.</td><td>Salesforce explicitly probes V2MOM — research their current company V2MOM before the interview.</td></tr><tr><td>Adobe</td><td>Senior DS / Senior PA</td><td>$165K–$230K base</td><td>Product sense case studies, A/B test design and interpretation, metric definition for creative/marketing products</td><td>Adobe's focus on creative + marketing SaaS aligns with your Mailchimp experience. Your 5-experiment portfolio is a strong differentiator.</td><td>Adobe asks practical case studies — 'creative engagement dropped, diagnose it.' Practice cold.</td></tr><tr><td>HubSpot</td><td>Senior DS</td><td>$170K–$220K base</td><td>HEART values (Humble, Empathetic, Adaptable, Remarkable, Transparent), marketing automation domain knowledge</td><td>Your AskData Bot + semantic layer shows the exact ML-for-product-productivity mindset HubSpot's Breeze AI team wants.</td><td>HubSpot's culture round is unique — it's a values conversation, not just behavioral. Research their Culture Code doc.</td></tr><tr><td>Klaviyo</td><td>Senior DS</td><td>$200K–$280K total</td><td>Ecommerce marketing automation domain, real-time customer segmentation, Python coding proficiency</td><td>SMS + email experimentation + propensity modeling at Mailchimp = direct Klaviyo domain match.</td><td>Klaviyo does pair programming in Python — practice live coding without IDE hints.</td></tr><tr><td>ServiceNow</td><td>Senior DS</td><td>$175K–$250K total</td><td>ML model knowledge (theory + practice), Python coding, enterprise product context</td><td>ServiceNow DS roles expect you to wear a PM hat — your experiment design + stakeholder translation work is directly relevant.</td><td>ServiceNow is enterprise-focused. Frame your work in terms of enterprise workflows and cross-team influence.</td></tr></tbody></table></div></div>
+<div class="tab-panel" data-group="main" data-tab="stories"><h2>Story Bank — 6 Pre-Built STAR Stories</h2><details><summary>SMS Cross-Sell Experiment <span class="tag">$2.3M revenue · 96% Bayesian confidence</span></summary><div class="details-body"><p><strong>Headline:</strong> $2.3M revenue impact — 96% Bayesian confidence</p><p><strong>Use for:</strong> Tell me about your biggest project, business impact, A/B testing experience, working with stakeholders</p><p><strong>Key Numbers:</strong> $2.3M attributable revenue, 96% Bayesian posterior probability, 3 treatment arms, 60K users</p><p><strong>Depth Signal:</strong> The Bayesian framing was a deliberate choice — Bayesian allows early stopping without inflating Type I error, which frequentist testing can't do cleanly in email experiments with variable open rates.</p></div></details><details><summary>PSM Study — Integrations Causal Inference <span class="tag">76% retention lift · AIPW doubly-robust</span></summary><div class="details-body"><p><strong>Headline:</strong> 76% retention lift with Canva integration — causal proof</p><p><strong>Use for:</strong> Causal inference questions, observational study design, influence without a controlled experiment</p><p><strong>Key Numbers:</strong> 76% retention lift, AIPW doubly-robust estimator, Canva integration, 6-month post-period</p><p><strong>Depth Signal:</strong> AIPW over PSM because AIPW is consistent if either the PS model or outcome model is correctly specified — doubly robust. PSM alone gave wrong-sign estimates when the PS model was misspecified early on.</p></div></details><details><summary>SMS Propensity Model <span class="tag">$500K revenue · XGBoost + SHAP</span></summary><div class="details-body"><p><strong>Headline:</strong> $500K in targeted upsell revenue — propensity-to-purchase model</p><p><strong>Use for:</strong> ML modeling questions, feature engineering, production model deployment, business impact</p><p><strong>Key Numbers:</strong> $500K, XGBoost + SHAP, 180+ features, 76% precision at top decile</p><p><strong>Depth Signal:</strong> The class imbalance challenge: 3% positive rate. Used downsampling + class weights + threshold tuning. SHAP let us explain predictions to the SMS product team so they could sanity-check the top-scored accounts.</p></div></details><details><summary>AskData Bot (Semantic Layer) <span class="tag">Gemini 2.5 Pro · Vertex AI · Semantic Layer</span></summary><div class="details-body"><p><strong>Headline:</strong> End-to-end AI analytics assistant — Gemini 2.5 Pro on Vertex AI</p><p><strong>Use for:</strong> AI/ML engineering questions, autonomous agent design, cross-functional influence, innovation</p><p><strong>Key Numbers:</strong> Gemini 2.5 Pro, Vertex AI, 50+ metrics in semantic layer, 10+ teams using it</p><p><strong>Depth Signal:</strong> The hard part wasn't the LLM — it was grounding it in a trusted semantic layer so it couldn't hallucinate metric definitions. Built a YAML-based knowledge layer that the model cites.</p></div></details><details><summary>JustAnswer Retention Analysis <span class="tag">+11% retention · Subscription redesign</span></summary><div class="details-body"><p><strong>Headline:</strong> +11% retention from subscription model redesign</p><p><strong>Use for:</strong> Product analytics questions, defining metrics for subscription SaaS, early career story</p><p><strong>Key Numbers:</strong> +11% retention, subscription model, cohort analysis, 3-month intervention timeline</p><p><strong>Depth Signal:</strong> Identified that the drop-off was happening at day 14, not day 30 as assumed. This changed the intervention strategy from email re-engagement at day 25 to product friction removal at day 12.</p></div></details><details><summary>SMS Churn Propensity Model <span class="tag">LightGBM · Temporal split · 90-day prediction</span></summary><div class="details-body"><p><strong>Headline:</strong> Predicting which SMS subscribers will churn before they disengage</p><p><strong>Use for:</strong> End-to-end ML pipeline, label definition challenges, temporal validation, production deployment</p><p><strong>Key Numbers:</strong> 5-stage Dataform pipeline, LightGBM, temporal train/test split, 90-day prediction horizon</p><p><strong>Depth Signal:</strong> The label definition was the hardest part: SMS 'churn' isn't account closure — it's disengagement. Defined churn as no campaign send for 90 days after a period of active sending. Temporal split was critical to avoid leakage.</p></div></details></div>
+<div class="tab-panel" data-group="main" data-tab="behavioral"><h2>Behavioral / HR Q&A</h2><div class="callout info"><div class="callout-title">Preparation Rule</div><p>Write out your answers to all of these before your first screen. Do not improvise. Each spoken answer should be 2–3 minutes max.</p></div><div class="card"><div class="card-header">"Tell me about yourself"</div><div class="card-body"><p>Frame: Mailchimp DS journey (SMS + ML focus) → AskData Bot (AI innovation) → now targeting Senior DS/PA at companies doing AI + analytics at scale. One sentence on why this company specifically. End with: 'I'm excited to bring this to [Company] because...'</p></div></div><div class="card"><div class="card-header">"Tell me about your biggest failure"</div><div class="card-body"><p>Tell the propensity model story but frame the failure as an earlier version that ignored class imbalance and had terrible precision. Learned: always look at the full precision-recall curve, not just AUC. Applied the lesson to the final model.</p></div></div><div class="card"><div class="card-header">"Tell me about a time you disagreed with a stakeholder"</div><div class="card-body"><p>SMS experiment framing: PM wanted to declare success at 2 weeks based on email opens. You pushed back — needed 4 weeks to see purchase conversion. Built the Bayesian monitoring framework to show daily posterior probability, which let you stop early WITH statistical confidence when the signal was clear.</p></div></div><div class="card"><div class="card-header">"Describe a time you worked on an ambiguous problem"</div><div class="card-body"><p>AskData Bot: no clear spec, no existing system, no precedent at the company. Approach: (1) defined the metric taxonomy first (what is a 'metric'?), (2) built a prototype with 5 metrics, (3) used it in a real stakeholder meeting, (4) iterated based on what broke.</p></div></div><h3>Company-Specific 'Why Us' Research Angles</h3><div class="tbl-wrap"><table><thead><tr><th>Company</th><th>Research Angle</th></tr></thead><tbody><tr><td>Salesforce</td><td>Agentforce — how does your AskData Bot experience connect to Agentforce's autonomous agent vision?</td></tr><tr><td>Microsoft</td><td>Copilot in Fabric/Power BI — your semantic layer work is directly relevant to how Copilot grounds SQL queries on enterprise data</td></tr><tr><td>Google</td><td>Gemini in BigQuery / Vertex AI — you already use Gemini 2.5 Pro on Vertex AI; reference this as direct technology alignment</td></tr><tr><td>Adobe</td><td>Adobe Experience Platform + AI Assistant — their push to make customer data actionable via AI mirrors your AskData Bot work</td></tr><tr><td>HubSpot</td><td>Breeze AI (HubSpot's AI suite for CRM automation) — your AI productivity tooling (semantic layer, Slack bot) is a natural fit</td></tr><tr><td>Klaviyo</td><td>IPO'd 2023, dominant in ecommerce SMS + email — your cross-channel SMS/email experimentation portfolio is a direct domain match</td></tr><tr><td>ServiceNow</td><td>Now Assist AI agents for enterprise workflows — position your autonomous DS agent workflow as the exact pattern they're scaling</td></tr></tbody></table></div></div>
+
+</div>
+<script>
+function initTabs(containerId) {
+  var c = document.getElementById(containerId) || document;
+  c.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var group = btn.dataset.group;
+      c.querySelectorAll('.tab-btn[data-group="'+group+'"]').forEach(function(b){ b.classList.remove('active'); });
+      c.querySelectorAll('.tab-panel[data-group="'+group+'"]').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      var panel = c.querySelector('.tab-panel[data-group="'+group+'"][data-tab="'+btn.dataset.tab+'"]');
+      if(panel) panel.classList.add('active');
+    });
+  });
+}
+document.addEventListener('DOMContentLoaded', function() { initTabs(); });
+</script>
+</body>
+</html>

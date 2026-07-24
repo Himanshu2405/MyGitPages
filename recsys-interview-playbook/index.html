@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Recommender Systems — Interview Playbook</title>
+<style>
+:root {
+  --bg: #0f0f0f;
+  --bg2: #1a1a1a;
+  --bg3: #242424;
+  --border: #2e2e2e;
+  --text: #e8e8e8;
+  --text2: #a0a0a0;
+  --text3: #666;
+  --accent: #4f8ef7;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --neutral: #6b7280;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; line-height: 1.6; }
+.container { max-width: 1040px; margin: 0 auto; padding: 32px 24px; }
+h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+h2 { font-size: 18px; font-weight: 600; margin: 24px 0 10px; }
+h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; }
+p  { color: var(--text2); margin: 6px 0; }
+.subtitle { color: var(--text2); margin-bottom: 20px; }
+
+/* Tab nav */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 4px; }
+.tab-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px; background: transparent; color: var(--text2); cursor: pointer; font-size: 13px; transition: all .15s; }
+.tab-btn:hover { border-color: var(--accent); color: var(--text); }
+.tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+/* Cards */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; }
+.card-header { padding: 12px 16px; font-weight: 600; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.card-body { padding: 14px 16px; }
+.grid { display: grid; gap: 14px; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+@media(max-width:700px){ .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
+
+/* Callouts */
+.callout { border-left: 4px solid var(--neutral); background: var(--bg2); border-radius: 0 6px 6px 0; padding: 12px 14px; margin: 10px 0; }
+.callout-title { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.callout.success { border-color: var(--success); }
+.callout.warning { border-color: var(--warning); }
+.callout.danger  { border-color: var(--danger);  }
+.callout.info    { border-color: var(--info);    }
+.callout.success .callout-title { color: var(--success); }
+.callout.warning .callout-title { color: var(--warning); }
+.callout.danger  .callout-title { color: var(--danger);  }
+.callout.info    .callout-title { color: var(--info);    }
+
+/* Pills */
+.pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+.pill.success { background: rgba(34,197,94,.15); color: var(--success); }
+.pill.warning { background: rgba(245,158,11,.15); color: var(--warning); }
+.pill.danger  { background: rgba(239,68,68,.15);  color: var(--danger);  }
+.pill.info    { background: rgba(59,130,246,.15); color: var(--info);    }
+.pill.neutral { background: var(--bg3); color: var(--text2); }
+
+/* Stats */
+.stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+.stat-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; min-width: 130px; }
+.stat-value { font-size: 20px; font-weight: 700; }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* Tables */
+.tbl-wrap { overflow-x: auto; margin: 12px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: var(--bg3); color: var(--text2); font-weight: 600; padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+/* Code */
+pre, code { font-family: "JetBrains Mono", "Fira Code", monospace; font-size: 12px; }
+pre { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; overflow-x: auto; line-height: 1.7; color: var(--text); white-space: pre; margin: 10px 0; }
+
+/* Collapsible */
+details { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin: 6px 0; }
+summary { padding: 10px 14px; cursor: pointer; font-weight: 500; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+summary::after { content: "▸"; color: var(--text2); transition: transform .2s; }
+details[open] summary::after { transform: rotate(90deg); }
+details .details-body { padding: 12px 16px; border-top: 1px solid var(--border); }
+.tag { font-size: 11px; color: var(--text3); }
+ul.bullet { padding-left: 18px; }
+ul.bullet li { color: var(--text2); margin: 4px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Recommender Systems — Interview Playbook</h1>
+<p class="subtitle">WebstaurantStore ML case discussion · B2B foodservice e-commerce · 5-tab playbook</p>
+<hr class="divider">
+<div class="tabs"><button class="tab-btn active" data-group="main" data-tab="framing">Framing</button>
+<button class="tab-btn" data-group="main" data-tab="models">Models</button>
+<button class="tab-btn" data-group="main" data-tab="design">Design</button>
+<button class="tab-btn" data-group="main" data-tab="metrics">Metrics</button>
+<button class="tab-btn" data-group="main" data-tab="architecture">Architecture</button>
+</div>
+<hr class="divider">
+<div class="tab-panel active" data-group="main" data-tab="framing"><h2>How to Open the ML Case</h2><div class="callout info"><div class="callout-title">Opening Move — Say This First</div><p>"Before I jump into models, I want to make sure I understand the problem. Can I ask a few clarifying questions?"</p></div><div class="tbl-wrap"><table><thead><tr><th>Question to Ask</th><th>Why It Matters</th><th>WebstaurantStore Angle</th></tr></thead><tbody><tr><td>What surface are we building for? Product page, homepage, cart, email?</td><td>Completely changes latency constraints and the right model architecture.</td><td>PDP = complementary items · Homepage = personalized · Cart = session-aware</td></tr><tr><td>What does success look like for the business?</td><td>Aligns your approach to outcomes the business actually cares about.</td><td>Cart size? Revenue per session? Repeat purchase rate? All are valid north stars.</td></tr><tr><td>Who are the users — new buyers or returning ones?</td><td>Drives how much you need to invest in cold-start handling.</td><td>New restaurants open constantly. Cold start is not an edge case here.</td></tr><tr><td>What data is available today?</td><td>Determines feasibility of behavioral models like collaborative filtering.</td><td>Purchase history? Browse events? Product catalog metadata? Images?</td></tr><tr><td>Are there any latency or infrastructure constraints?</td><td>Rules out expensive real-time inference models early.</td><td>Product page recs need to load fast — probably <200ms SLA.</td></tr></tbody></table></div><h3>The ML Framing Template</h3><div class="grid grid-3"><div><div class="card"><div class="card-header">Step 1 — Define the task</div><div class="card-body"><p>Turn 'improve recommendations' into a concrete ML task. Example: 'Predict the probability that buyer B purchases item I, given their last 30-day purchase history.'</p></div></div></div><div><div class="card"><div class="card-header">Step 2 — Define the label</div><div class="card-body"><p>What counts as a positive example? Purchase = positive. Impression with no click = negative. Decide implicit vs explicit feedback early — most e-commerce is implicit.</p></div></div></div><div><div class="card"><div class="card-header">Step 3 — Define the baseline</div><div class="card-body"><p>Always propose a simple baseline first. 'Most popular items' or 'frequently bought together' is fast to ship, easy to explain, and surprisingly hard to beat.</p></div></div></div></div><div class="callout neutral"><div class="callout-title">Anti-Pattern to Avoid</div><p>Do not immediately jump to 'I'd use a Two-Tower neural network.' It signals you can't reason about trade-offs. Start simple, then justify complexity.</p></div></div>
+<div class="tab-panel" data-group="main" data-tab="models"><h2>Model Types — Comparison</h2><div class="tbl-wrap"><table><thead><tr><th>Model</th><th>How It Works</th><th>Pros</th><th>Cons</th><th>Use at WebstaurantStore When...</th></tr></thead><tbody><tr><td>Collaborative Filtering</td><td>Finds buyers with similar purchase patterns and borrows their preferences. Fills in a user × item matrix.</td><td>Captures diverse preferences · no content data needed · can recommend outside usual category</td><td>Fails for new users/items (cold start) · needs sufficient behavioral data</td><td>Returning buyers with purchase history. 'Customers like you also bought...' on product pages.</td></tr><tr><td>Content-Based Filtering</td><td>Recommends items similar in metadata to things you've bought, using embeddings.</td><td>Works immediately for new items · explainable ('because you bought X') · no behavior required</td><td>Limited to similar items — no discovery · doesn't capture complementary items well</td><td>New product launches · cold-start buyers · 'bought a commercial fryer → show fry baskets + fryer oil'</td></tr><tr><td>Hybrid (Two-Tower)</td><td>Neural net with a user tower and an item tower. Combines behavioral signals + content features.</td><td>Best accuracy · handles cold start via content features · supports diverse rec types</td><td>More complex to build and maintain · slower training · harder to debug</td><td>Personalized homepage once you have enough data. Justified when simpler models plateau.</td></tr></tbody></table></div><div class="callout warning"><div class="callout-title">Cold Start — The WebstaurantStore Priority</div><p>New restaurants open constantly. A brand-new buyer has zero purchase history. You must always have an answer for cold start. Content-based filtering on product category + inferred business type (catering vs. pizzeria vs. bakery) is the practical answer. Bring this up proactively.</p></div></div>
+<div class="tab-panel" data-group="main" data-tab="design"><h2>Design Considerations</h2><div class="tbl-wrap"><table><thead><tr><th>Consideration</th><th>Definition</th><th>WebstaurantStore Context</th><th>Priority</th></tr></thead><tbody><tr><td>Relevance</td><td>Are the recs actually useful to this user?</td><td>A pizzeria buyer shouldn't see bakery supplies. Category relevance is table stakes.</td><td>Critical</td></tr><tr><td>Cold Start</td><td>What do you do for new users or new products with no history?</td><td>New restaurants open constantly · new SKUs launch regularly. Two distinct cold start problems.</td><td>Critical</td></tr><tr><td>Diversity</td><td>Don't recommend the same item type five different ways.</td><td>Buyer has a commercial fryer in cart → don't show 5 more fryers. Show fry baskets, fryer oil, thermometers.</td><td>High</td></tr><tr><td>Freshness</td><td>Are recs up-to-date with recent behavior and inventory?</td><td>Seasonal menu changes, promotional inventory, new product lines.</td><td>Medium</td></tr><tr><td>Latency</td><td>How quickly must recs appear on the page?</td><td>Product pages need fast load — cache pre-computed item-to-item scores where possible.</td><td>High</td></tr><tr><td>Fairness</td><td>Are some product categories systematically under-recommended?</td><td>Niche product lines shouldn't be invisible just because they have fewer purchases in training data.</td><td>Medium</td></tr><tr><td>Scalability</td><td>Does the system hold up at 400k+ products?</td><td>Multi-stage funnel: candidate generation → scoring → re-ranking.</td><td>High</td></tr></tbody></table></div></div>
+<div class="tab-panel" data-group="main" data-tab="metrics"><h2>Metrics Framework</h2><h3>Offline Metrics</h3><div class="tbl-wrap"><table><thead><tr><th>Metric</th><th>Formula / Description</th><th>When It Matters</th></tr></thead><tbody><tr><td>Precision@K</td><td># relevant items in top K / K</td><td>Are the K items shown to the user actually relevant?</td></tr><tr><td>Recall@K</td><td># relevant items in top K / total relevant items</td><td>Are we surfacing enough of the items the user would want?</td></tr><tr><td>NDCG@K</td><td>Normalized Discounted Cumulative Gain</td><td>Ranking quality — higher-ranked relevant items get more credit</td></tr><tr><td>Coverage</td><td># unique items recommended / # items in catalog</td><td>Prevents recommendation concentration on popular items only</td></tr><tr><td>Diversity</td><td>Average pairwise distance in embedding space</td><td>Are recommendations diverse, or just variations of the same item?</td></tr></tbody></table></div><h3>Online (Business) Metrics</h3><div class="tbl-wrap"><table><thead><tr><th>Metric</th><th>What It Measures</th></tr></thead><tbody><tr><td>Click-Through Rate (CTR)</td><td>Did users click on the recommended item?</td></tr><tr><td>Add-to-Cart Rate from Recs</td><td>Did the click result in purchase intent?</td></tr><tr><td>Revenue per Session Lift</td><td>Did recs drive more spending per session? (ultimate business outcome)</td></tr><tr><td>Average Cart Size</td><td>Are recs driving basket expansion? (the key B2B metric for WebstaurantStore)</td></tr><tr><td>Repeat Purchase Rate from Rec Clicks</td><td>Do users who click recs come back more?</td></tr></tbody></table></div><div class="callout info"><div class="callout-title">North Star for WebstaurantStore</div><p>Average cart value per session and cart size uplift from recommendations. B2B buyers come to restock — getting them to add one more complementary item per order is the highest-ROI rec objective.</p></div></div>
+<div class="tab-panel" data-group="main" data-tab="architecture"><h2>Production Architecture — Multi-Stage Pipeline</h2><h3>Stage 1 — Candidate Generation (700K → ~1000)</h3><div class="tbl-wrap"><table><thead><tr><th>Method</th><th>How It Works</th><th>Latency</th><th>WebstaurantStore Example</th></tr></thead><tbody><tr><td>Item-to-item co-occurrence lookup</td><td>Pre-computed: for each item, top-200 most co-purchased items stored as key-value</td><td><5ms</td><td>Buyer viewing Vulcan 36" range → return 200 most co-purchased items pre-computed offline</td></tr><tr><td>ANN search on item embeddings</td><td>FAISS index: cosine similarity on 128-dim embeddings for semantic similarity</td><td>~20ms</td><td>New product with no purchase history → find nearest neighbors by product description embedding</td></tr><tr><td>Popularity filter</td><td>Top-N items by purchase frequency in buyer's category</td><td><1ms</td><td>New buyer with no history: surface top-50 items in 'Commercial Kitchen' category</td></tr><tr><td>User embedding lookup</td><td>ANN search against pre-computed user vector (for returning buyers)</td><td>~20ms</td><td>Returning buyer with 12 months of history → ANN search in item space against user embedding</td></tr></tbody></table></div><h3>Stage 2 — Scoring (1000 → ~50)</h3><div class="tbl-wrap"><table><thead><tr><th>Model</th><th>Features</th><th>Latency</th><th>Use When</th></tr></thead><tbody><tr><td>LightGBM ranker</td><td>User features + item features + interaction features (co-purchase rate, price delta, category match)</td><td>~10ms</td><td>Default production ranker — fast and interpretable with SHAP</td></tr><tr><td>Two-Tower neural net</td><td>User tower: history embeddings; Item tower: content + behavioral embeddings</td><td>~30ms</td><td>When LightGBM plateaus; handles cold start better with content tower</td></tr></tbody></table></div><h3>Stage 3 — Re-ranking (50 → 5-10 shown)</h3><div class="tbl-wrap"><table><thead><tr><th>Rule</th><th>What It Does</th><th>Why</th></tr></thead><tbody><tr><td>Diversity filter (MMR)</td><td>Select items that maximize relevance minus similarity to already-selected items</td><td>Prevent showing 5 commercial fryers — pick 1 then switch to fry baskets, oil, thermometer</td></tr><tr><td>In-stock filter</td><td>Remove any item currently out of stock or discontinued</td><td>Inventory changes in real time; model trained last week can't know today's stock levels</td></tr><tr><td>Freshness boost</td><td>Multiply score by recency multiplier for new products or items on promotion</td><td>Business teams need to control this without retraining</td></tr><tr><td>In-session deduplication</td><td>Remove items already in buyer's cart</td><td>Model doesn't have real-time cart state; apply as filter at render time</td></tr></tbody></table></div><h3>Iteration Roadmap</h3><div class="tbl-wrap"><table><thead><tr><th>Phase</th><th>What to Build</th><th>Why This Order</th></tr></thead><tbody><tr><td>Phase 1 (weeks 1-4)</td><td>Item-to-item CF on PDPs + 'buy it again' from purchase history</td><td>Fast to ship · immediately valuable · establishes data collection pipeline · no cold start issue</td></tr><tr><td>Phase 2 (weeks 5-12)</td><td>Content-based embeddings for cold-start buyers and new products</td><td>Addresses the gap Phase 1 leaves. New restaurants and new SKU launches are now handled.</td></tr><tr><td>Phase 3 (months 3-6)</td><td>Two-Tower hybrid model for homepage personalization</td><td>More data now available · complexity is justified · higher expected revenue lift</td></tr><tr><td>Phase 4 (ongoing)</td><td>Session-aware re-ranking, A/B testing framework, data drift monitoring</td><td>Continuous improvement · catch model degradation early · enable fast experimentation</td></tr></tbody></table></div></div>
+
+</div>
+<script>
+function initTabs(containerId) {
+  var c = document.getElementById(containerId) || document;
+  c.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var group = btn.dataset.group;
+      c.querySelectorAll('.tab-btn[data-group="'+group+'"]').forEach(function(b){ b.classList.remove('active'); });
+      c.querySelectorAll('.tab-panel[data-group="'+group+'"]').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      var panel = c.querySelector('.tab-panel[data-group="'+group+'"][data-tab="'+btn.dataset.tab+'"]');
+      if(panel) panel.classList.add('active');
+    });
+  });
+}
+document.addEventListener('DOMContentLoaded', function() { initTabs(); });
+</script>
+</body>
+</html>

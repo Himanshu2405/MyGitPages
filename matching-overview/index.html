@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Matching Methods — Overview</title>
+<style>
+:root {
+  --bg: #0f0f0f;
+  --bg2: #1a1a1a;
+  --bg3: #242424;
+  --border: #2e2e2e;
+  --text: #e8e8e8;
+  --text2: #a0a0a0;
+  --text3: #666;
+  --accent: #4f8ef7;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --neutral: #6b7280;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; line-height: 1.6; }
+.container { max-width: 1040px; margin: 0 auto; padding: 32px 24px; }
+h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+h2 { font-size: 18px; font-weight: 600; margin: 24px 0 10px; }
+h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; }
+p  { color: var(--text2); margin: 6px 0; }
+.subtitle { color: var(--text2); margin-bottom: 20px; }
+
+/* Tab nav */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 4px; }
+.tab-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px; background: transparent; color: var(--text2); cursor: pointer; font-size: 13px; transition: all .15s; }
+.tab-btn:hover { border-color: var(--accent); color: var(--text); }
+.tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+/* Cards */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; }
+.card-header { padding: 12px 16px; font-weight: 600; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.card-body { padding: 14px 16px; }
+.grid { display: grid; gap: 14px; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+@media(max-width:700px){ .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
+
+/* Callouts */
+.callout { border-left: 4px solid var(--neutral); background: var(--bg2); border-radius: 0 6px 6px 0; padding: 12px 14px; margin: 10px 0; }
+.callout-title { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.callout.success { border-color: var(--success); }
+.callout.warning { border-color: var(--warning); }
+.callout.danger  { border-color: var(--danger);  }
+.callout.info    { border-color: var(--info);    }
+.callout.success .callout-title { color: var(--success); }
+.callout.warning .callout-title { color: var(--warning); }
+.callout.danger  .callout-title { color: var(--danger);  }
+.callout.info    .callout-title { color: var(--info);    }
+
+/* Pills */
+.pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+.pill.success { background: rgba(34,197,94,.15); color: var(--success); }
+.pill.warning { background: rgba(245,158,11,.15); color: var(--warning); }
+.pill.danger  { background: rgba(239,68,68,.15);  color: var(--danger);  }
+.pill.info    { background: rgba(59,130,246,.15); color: var(--info);    }
+.pill.neutral { background: var(--bg3); color: var(--text2); }
+
+/* Stats */
+.stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+.stat-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; min-width: 130px; }
+.stat-value { font-size: 20px; font-weight: 700; }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* Tables */
+.tbl-wrap { overflow-x: auto; margin: 12px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: var(--bg3); color: var(--text2); font-weight: 600; padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+/* Code */
+pre, code { font-family: "JetBrains Mono", "Fira Code", monospace; font-size: 12px; }
+pre { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; overflow-x: auto; line-height: 1.7; color: var(--text); white-space: pre; margin: 10px 0; }
+
+/* Collapsible */
+details { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin: 6px 0; }
+summary { padding: 10px 14px; cursor: pointer; font-weight: 500; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+summary::after { content: "▸"; color: var(--text2); transition: transform .2s; }
+details[open] summary::after { transform: rotate(90deg); }
+details .details-body { padding: 12px 16px; border-top: 1px solid var(--border); }
+.tag { font-size: 11px; color: var(--text3); }
+ul.bullet { padding-left: 18px; }
+ul.bullet li { color: var(--text2); margin: 4px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Matching Methods — Overview</h1>
+<p class="subtitle">Comprehensive guide to observational causal inference matching methods: from Exact Matching to AIPW</p>
+<hr class="divider">
+<div class="tabs"><button class="tab-btn active" data-group="main" data-tab="methods">Methods</button>
+<button class="tab-btn" data-group="main" data-tab="decision">Decision Guide</button>
+<button class="tab-btn" data-group="main" data-tab="assumptions">Assumptions</button>
+<button class="tab-btn" data-group="main" data-tab="checks">Quality Checks</button>
+<button class="tab-btn" data-group="main" data-tab="sutva">SUTVA</button>
+</div>
+<hr class="divider">
+<div class="tab-panel active" data-group="main" data-tab="methods"><h2>Matching Methods Overview</h2><div class="tbl-wrap"><table><thead><tr><th>Method</th><th>Family</th><th>Dimensionality</th><th>Info Loss</th><th>Estimand</th><th>Best For</th><th>Maturity</th></tr></thead><tbody><tr><td>Exact Matching</td><td>Direct</td><td>Only feasible with few categorical covariates</td><td>High</td><td>ATT</td><td>Fewer than 4 categorical covariates, large control pool</td><td><span class="pill neutral">Starter</span></td></tr><tr><td>CEM (Coarsened Exact Matching)</td><td>Direct</td><td>Moderate — works with 4-8 covariates</td><td>Medium</td><td>ATT</td><td>Mostly categorical/ordinal covariates; skeptical of PS model; want model-free match</td><td><span class="pill info">Standard</span></td></tr><tr><td>PSM (Propensity Score Matching)</td><td>Score-Based</td><td>Handles 5-50+ covariates via 1D projection</td><td>Medium</td><td>ATT</td><td>Many continuous covariates (5-50+); default method in product analytics; explainability matters</td><td><span class="pill info">Standard</span></td></tr><tr><td>Mahalanobis Distance Matching</td><td>Direct</td><td>Degrades with 10+ covariates</td><td>Low</td><td>ATT</td><td>Continuous covariates with known correlation structure; small number of predictive covariates</td><td><span class="pill info">Standard</span></td></tr><tr><td>Genetic Matching</td><td>Direct</td><td>Handles 5-20 covariates; computationally expensive</td><td>Low</td><td>ATT</td><td>When balance quality is critical; have compute budget (R's Matching package)</td><td><span class="pill warning">Advanced</span></td></tr><tr><td>Optimal Matching</td><td>Direct</td><td>Works on any distance metric; O(n^3)</td><td>Low</td><td>ATT</td><td>Small-to-medium samples; greedy NN produces poor matches</td><td><span class="pill warning">Advanced</span></td></tr><tr><td>IPW / IPTW (Weighting)</td><td>Weighting</td><td>Handles 5-50+ via PS model</td><td>None</td><td>ATE</td><td>Need ATE across entire population; want to retain all units; large samples</td><td><span class="pill info">Standard</span></td></tr><tr><td>AIPW (Doubly Robust)</td><td>Doubly Robust</td><td>Handles 5-50+ with ML nuisance models</td><td>None</td><td>ATT or ATE</td><td>Publication-level rigor; rich feature set; high-stakes decisions; used in Mailchimp Integrations Causal study</td><td><span class="pill warning">Advanced</span></td></tr></tbody></table></div></div>
+<div class="tab-panel" data-group="main" data-tab="decision"><h2>Which Matching Method to Use?</h2><div class="tbl-wrap"><table><thead><tr><th>Scenario</th><th>Recommended Method</th><th>Why</th></tr></thead><tbody><tr><td>Default product analytics work with 5-50 covariates</td><td><span class="pill success">PSM</span></td><td>Handles many continuous covariates; explainable; default in practice</td></tr><tr><td>High-stakes decision, skeptical reviewers, financial consequences</td><td><span class="pill warning">AIPW</span></td><td>Doubly robust: consistent if either PS model or outcome model is correct</td></tr><tr><td>All covariates are categorical, 4-8 covariates</td><td><span class="pill info">CEM</span></td><td>Model-free; balance guaranteed by construction</td></tr><tr><td>Need ATE (not ATT), want to retain all units</td><td><span class="pill info">IPW</span></td><td>No units dropped; estimates ATE</td></tr><tr><td>Maximum balance quality required, have compute</td><td><span class="pill warning">Genetic Matching</span></td><td>Optimizes weights for balance by construction</td></tr><tr><td>Small sample, greedy NN giving poor matches</td><td><span class="pill warning">Optimal Matching</span></td><td>Globally optimal pairings</td></tr></tbody></table></div><div class="callout info"><div class="callout-title">Practical Rule from Mailchimp Integrations Causal Study</div><p>The study used AIPW (doubly robust) as the primary estimator and PSM only as a sanity check. PSM produced the wrong sign in early runs when the PS model was misspecified — a reminder that PSM is not robust to PS model error the way AIPW is. For exploratory work, PSM is fine. For decisions with financial consequences, use AIPW.</p></div></div>
+<div class="tab-panel" data-group="main" data-tab="assumptions"><h2>Universal Assumptions</h2><div class="tbl-wrap"><table><thead><tr><th>Assumption</th><th>Plain English</th><th>How to Test</th></tr></thead><tbody><tr><td>Unconfoundedness (CIA)</td><td>Given observed covariates, treatment is as-good-as-random</td><td>Cannot be directly tested. Placebo test provides evidence. E-value quantifies robustness.</td></tr><tr><td>Overlap / Common Support</td><td>Every treated unit has a comparable control</td><td>Check PS distribution overlap histogram; drop units outside common support</td></tr><tr><td>SUTVA — No Interference</td><td>One unit's treatment doesn't affect another's outcome</td><td>Cluster randomization; restrict to non-referred users</td></tr><tr><td>SUTVA — Single Version of Treatment</td><td>All treated units receive the same treatment</td><td>Stratify by treatment intensity; analyze sub-groups</td></tr></tbody></table></div><h3>What You CAN Test</h3><div class="tbl-wrap"><table><thead><tr><th>Test</th><th>What It Checks</th></tr></thead><tbody><tr><td>Overlap histogram</td><td>Positivity — do PS distributions overlap?</td></tr><tr><td>Post-match SMD</td><td>Balance — are covariates similar after matching?</td></tr><tr><td>Placebo test</td><td>Unconfoundedness — pre-period ATT should be near zero</td></tr><tr><td>Variance ratio</td><td>Balance in spread, not just means</td></tr><tr><td>Effective Sample Size</td><td>Weighting — are extreme weights dominating?</td></tr></tbody></table></div><div class="callout danger"><div class="callout-title">Unconfoundedness is fundamentally untestable</div><p>You cannot directly test whether there are unmeasured confounders. The placebo test gives evidence about measured balance but cannot detect confounders you did not collect. Use sensitivity analysis: E-value measures how strong an unmeasured confounder would need to be to explain away your result. Rosenbaum bounds: bound on how much hidden bias could shift your p-value. If PSM, CEM, and AIPW all agree, the result is more robust.</p></div></div>
+<div class="tab-panel" data-group="main" data-tab="checks"><h2>Quality Checklist After Any Matching</h2><div class="tbl-wrap"><table><thead><tr><th>Check</th><th>What to Look For</th><th>Diagnostic Tool</th><th>Priority</th></tr></thead><tbody><tr><td>Post-match SMD for all covariates</td><td>|SMD| < 0.1 for every covariate</td><td>Love plot, SMD table</td><td><span class="pill success">Must-have</span></td></tr><tr><td>Overlap histogram</td><td>PS distributions of treated and control substantially overlap</td><td>Density plot of PS</td><td><span class="pill success">Must-have</span></td></tr><tr><td>Placebo test (pre-period ATT)</td><td>Pre-period ATT ≈ 0 — if treated and control were similar before, matching is valid</td><td>Same estimation pipeline on pre-period outcome</td><td><span class="pill success">Must-have</span></td></tr><tr><td>Variance ratio (per covariate)</td><td>Variance ratio close to 1.0 — balance in spread, not just means</td><td>Python: t.var() / c.var()</td><td><span class="pill info">Recommended</span></td></tr><tr><td>Effective Sample Size (IPW/AIPW only)</td><td>ESS not dominated by a few extreme weights</td><td>ESS = sum(w)^2 / sum(w^2)</td><td><span class="pill neutral">IPW only</span></td></tr><tr><td>Sensitivity analysis (E-value)</td><td>E-value > 2 — result is robust to moderate unmeasured confounding</td><td>E-value calculation from estimated effect + SE</td><td><span class="pill warning">Advanced</span></td></tr></tbody></table></div><h3>SMD Formula</h3><pre>SMD = (mean_treated - mean_control) / pooled_std
+pooled_std = sqrt((var_treated + var_control) / 2)
+
+# Target: |SMD| < 0.1 for all covariates after matching
+# Values below 0.1 are conventionally considered 'balanced'</pre><div class="callout neutral"><div class="callout-title">The Design-Before-Analysis Principle (Rubin 2007)</div><p>Finalize your matching specification before looking at any outcome data. Balance checks should be done on covariates only — never use outcome information to guide matching choices. Peeking at outcomes while tuning your match is a form of p-hacking that inflates false positive rates.</p></div></div>
+<div class="tab-panel" data-group="main" data-tab="sutva"><h2>SUTVA Deep Dive — When It Matters in Product</h2><div class="tbl-wrap"><table><thead><tr><th>SUTVA Condition</th><th>Violated When...</th><th>Product Example</th><th>Fix</th></tr></thead><tbody><tr><td>No Interference</td><td>One user's treatment affects another's outcome</td><td>Referral program: treated user invites control user, who then behaves differently</td><td>Use cluster randomization; restrict analysis to non-referred users</td></tr><tr><td>Single Version of Treatment</td><td>Treated units receive meaningfully different versions</td><td>Canva integration: some connect once and forget; others sync 50 images/week</td><td>Stratify by treatment intensity (e.g. canva_sync_tier); analyze sub-groups</td></tr><tr><td>No Anticipation</td><td>Control users change behavior before treatment starts</td><td>Announced feature: control users sign up elsewhere before rollout</td><td>Use sharp rollout with no pre-announcement; define control window carefully</td></tr></tbody></table></div></div>
+
+</div>
+<script>
+function initTabs(containerId) {
+  var c = document.getElementById(containerId) || document;
+  c.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var group = btn.dataset.group;
+      c.querySelectorAll('.tab-btn[data-group="'+group+'"]').forEach(function(b){ b.classList.remove('active'); });
+      c.querySelectorAll('.tab-panel[data-group="'+group+'"]').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      var panel = c.querySelector('.tab-panel[data-group="'+group+'"][data-tab="'+btn.dataset.tab+'"]');
+      if(panel) panel.classList.add('active');
+    });
+  });
+}
+document.addEventListener('DOMContentLoaded', function() { initTabs(); });
+</script>
+</body>
+</html>
