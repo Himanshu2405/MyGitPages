@@ -4,7 +4,7 @@ Converts all canvas .tsx files to standalone HTML pages.
 Run from: /Users/hdubey2/Personal/canvases/
 """
 
-import os, re, sys
+import os, re, shutil, sys
 
 CANVAS_DIR = os.path.expanduser("~/.cursor/projects/Users-hdubey2-Personal/canvases")
 # Output directory: first CLI arg wins, else the script's own directory.
@@ -3501,9 +3501,17 @@ CANVASES = [
     ("binance-us-prep",                   make_binance_us),
 ]
 
+# Hand-authored canvases with no make_* function. They live as static folders
+# next to this script and are copied into OUT_DIR verbatim.
+STATIC_CANVASES = [
+    "handshake-senior-ds-prep",
+]
+
 # Landing-page metadata: (category, [(slug, title, description, tag), ...])
 INDEX_SECTIONS = [
     ("Product Analyst Prep", [
+        ("handshake-senior-ds-prep", "Handshake — Senior Data Scientist, Product Analytics",
+         "Three-sided marketplace fluency, measurable L1&rarr;L3 metric trees plus a recruiter/job-seeker view, diagnosis, experiment design, where A/B tests break, DS&harr;ML (Relevance) collaboration, an AI case-study framework, and the Job-Creation PM collaboration interview.", "Handshake"),
         ("playstation-senior-product-analyst-prep", "PlayStation — Senior Product Analyst Prep",
          "Sony/PlayStation business fluency, L1&rarr;L3 metric trees, metric-decline diagnosis, and A/B test design.", "PlayStation"),
         ("binance-us-prep", "Binance.US — Senior Product Analyst Prep",
@@ -3607,6 +3615,19 @@ if __name__ == "__main__":
             f.write(fn())
         created.append(out_path)
         print(f"✓  {out_path}")
+
+    # Static (hand-authored) canvases — copied, not generated
+    src_root = os.path.dirname(os.path.abspath(__file__))
+    for name in STATIC_CANVASES:
+        src = os.path.join(src_root, name)
+        dst = os.path.join(OUT_DIR, name)
+        if not os.path.isdir(src):
+            print(f"!  skipped {name} — not found at {src}")
+            continue
+        if os.path.abspath(src) != os.path.abspath(dst):
+            shutil.copytree(src, dst, dirs_exist_ok=True)
+        created.append(os.path.join(dst, "index.html"))
+        print(f"✓  {os.path.join(dst, 'index.html')}  (static)")
 
     # Landing page
     index_path = os.path.join(OUT_DIR, "index.html")

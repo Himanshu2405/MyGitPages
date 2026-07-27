@@ -10,6 +10,7 @@ Each canvas lives in its own folder with an `index.html`. The root `index.html` 
 
 | Category | Canvas | Path |
 |----------|--------|------|
+| Product Analyst Prep | Handshake — Senior Data Scientist, Product Analytics | `handshake-senior-ds-prep/` |
 | Product Analyst Prep | PlayStation — Senior Product Analyst Prep | `playstation-senior-product-analyst-prep/` |
 | Product Analyst Prep | Binance.US — Senior Product Analyst Prep | `binance-us-prep/` |
 | Product Analyst Prep | A/B Testing Stats — Senior PA Prep | `ab-test-stats-prep/` |
@@ -43,7 +44,16 @@ The landing-page URL shown next to each canvas comes from `BASE_URL` in the scri
 
 ## Adding a new canvas
 
+**Option A — generated from a Python function (most canvases):**
+
 1. Add a `make_<name>()` function in `generate_html.py`.
 2. Add `("<slug>", make_<name>)` to the `CANVASES` list.
 3. Add an entry to `INDEX_SECTIONS` so it shows on the landing page.
 4. Re-run `python3 generate_html.py`, commit, and push.
+
+**Option B — hand-authored static HTML (e.g. `handshake-senior-ds-prep/`):**
+
+1. Write the folder yourself (`<slug>/index.html`) instead of a `make_<name>()` function.
+2. Add `"<slug>"` to the `STATIC_CANVASES` list — the script copies the folder into the output verbatim instead of generating it.
+3. Add an entry to `INDEX_SECTIONS` so it shows on the landing page.
+4. Re-run `python3 generate_html.py`, commit, and push. Since the folder isn't regenerated, edit `<slug>/index.html` directly for future updates.
