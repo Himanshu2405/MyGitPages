@@ -263,6 +263,7 @@ ul.bullet li { color: var(--text2); margin: 4px 0; }
 <tr><td><strong>Timing / placement</strong></td><td>Check when the CTA appears — immediately after publishing a job (high intent) versus buried in account settings or a later email.</td><td>Moment-of-decision matters enormously here; intent is highest right after a job is created.</td></tr>
 <tr><td><strong>Employer mix</strong></td><td>Compare our employer base's size/tier distribution to the benchmark's underlying sample.</td><td>If Handshake's base skews toward free-tier SMBs with thinner budgets relative to the benchmark's sample, part of the gap is composition, not conversion.</td></tr>
 <tr><td><strong>Checkout / execution friction</strong></td><td>Look at the promotion flow itself — budget-setting complexity, payment friction, unclear duration options.</td><td>An execution problem inside the purchase flow, separable from whether employers want the product at all.</td></tr>
+<tr><td><strong>Temporary campaign effect / mean reversion</strong></td><td>Plot the metric over a longer trailing window (6–12 months) and overlay past marketing/email campaign dates — does the "baseline" period sit inside or right after a campaign-driven spike?</td><td>A past campaign promoting Promoted Jobs would have pushed the rate above its true steady state; if today's rate matches the pre-campaign trend, the "decline" is really just reversion to normal, not a new problem.</td></tr>
 </tbody></table></div>
 </div></details>
 
@@ -819,6 +820,7 @@ design effect = 1 + 7 * 0.20 = 2.4
 <button class="tab-btn" data-group="dsml" data-tab="changes">What changes in prod</button>
 <button class="tab-btn" data-group="dsml" data-tab="auc">Why AUC moves</button>
 <button class="tab-btn" data-group="dsml" data-tab="bench">Benchmarking Relevance</button>
+<button class="tab-btn" data-group="dsml" data-tab="sms">My SMS model, end to end</button>
 <button class="tab-btn" data-group="dsml" data-tab="qa">Q&amp;A + what to say</button>
 </div>
 <hr class="divider sub">
@@ -939,6 +941,69 @@ design effect = 1 + 7 * 0.20 = 2.4
 <div class="callout success"><div class="callout-title">How to tell an ML team their offline win isn't a business win — without a fight</div><p>"Your NDCG gain is real and I believe it. The reason it didn't show up online is that our offline harness scores each query independently, so it can't see the congestion effect — the ranker is right about which jobs are best, and that's exactly why 5,000 students applied to the same 200 roles. Can we add a capacity-aware feature and put application concentration in the offline harness as a second objective? Then your offline metric will predict the online result, which helps you as much as it helps me."</p><p style="margin-top:6px">Structure of that move: validate their work &rarr; explain the mechanism, not the failure &rarr; propose a fix to the shared measurement system &rarr; frame the benefit as mutual. Never "your model didn't work."</p></div>
 </div>
 
+<!-- 8f-pre -->
+<div class="tab-panel" data-group="dsml" data-tab="sms">
+<h2>My SMS propensity model, mapped end to end</h2>
+<p>This is the real project the frameworks above are built from. I ran two tracks myself &mdash; sklearn for exploration and BigQuery ML for production &mdash; but the split between them is exactly the DS-versus-production handoff Handshake is asking about, so I tell it that way.</p>
+
+<div class="callout info"><div class="callout-title">How to frame it if pushed on "who built the production model"</div><p>Be direct: I built both tracks. The sklearn track is the DS/exploration model &mdash; feature validation and the SHAP narrative for PMs and Sales. The BigQuery ML track is what actually runs in production &mdash; it scores every eligible customer on a schedule and feeds five live experiments. The requirements one track needed from the other are identical to a DS-to-ML handoff, which is why it's the right story for this question.</p></div>
+
+<h2>The two tracks, side by side</h2>
+<div class="tbl-wrap"><table><thead><tr><th>Dimension</th><th>DS / exploration (sklearn)</th><th>Production (BigQuery ML)</th></tr></thead><tbody>
+<tr><td><strong>Purpose</strong></td><td>Prove the feature set had signal and explain the drivers.</td><td>Score every eligible customer and feed live targeting systems.</td></tr>
+<tr><td><strong>Platform</strong></td><td>Python / scikit-learn in Vertex AI Colab.</td><td>BOOSTED_TREE_CLASSIFIER, scored in-warehouse &mdash; no export step.</td></tr>
+<tr><td><strong>Tuning</strong></td><td>BayesSearchCV, 50 iterations, 3-fold CV.</td><td>Google Vizier, 10 trials &mdash; narrower search, already-validated feature set.</td></tr>
+<tr><td><strong>What was tested</strong></td><td>70-feature vs 700-feature comparison, to justify using the full customer-signature table.</td><td>The full production pipeline: custom signals plus the customer-signature table.</td></tr>
+<tr><td><strong>Headline eval</strong></td><td>AUC only &mdash; 73.5% (70 features) &rarr; 78.6% (700 features).</td><td>AUC 82%, KS 0.415, plus a full confusion matrix and decile lift.</td></tr>
+<tr><td><strong>Consumer</strong></td><td>Me, to decide the feature set; PMs and Sales, for the SHAP narrative.</td><td>Two live scoring systems: in-product targeting and Sales outreach.</td></tr>
+</tbody></table></div>
+
+<h2>What production needed before it could be trusted &mdash; the handoff-equivalent</h2>
+<div class="tbl-wrap"><table><thead><tr><th>Requirement</th><th>What it looked like on this project</th></tr></thead><tbody>
+<tr><td><strong>Label defined in SQL, not prose</strong></td><td>SMS application start, not credit purchase &mdash; start is the funnel entry point; purchase would have been too sparse and too late to act on.</td></tr>
+<tr><td><strong>A deterministic, reproducible split</strong></td><td>SHA512(user_id) &rarr; NTILE(30) buckets, fixed assignment to train / test / calibration. Anyone re-running the query gets the identical split &mdash; no seed to accidentally change.</td></tr>
+<tr><td><strong>A named leakage risk, not a hidden one</strong></td><td>One phone-contact rolling window included same-day activity not available at score time. Flagged explicitly, with the exact fix &mdash; ROWS BETWEEN 28 PRECEDING AND 1 PRECEDING.</td></tr>
+<tr><td><strong>A baseline to beat</strong></td><td>There was no competing model &mdash; the baseline was no targeting at all. The flat penetration curve (~3% for weeks) was the evidence proactive targeting was needed.</td></tr>
+<tr><td><strong>Known limitations named upfront</strong></td><td>No probability calibration (5&times; positive weighting biases raw scores upward), one global model when tenured vs. new customers actually rank on different top features, no scheduled retraining yet.</td></tr>
+</tbody></table></div>
+
+<h2>What actually changed going from exploration to production</h2>
+<div class="tbl-wrap"><table><thead><tr><th>What changed</th><th>Exploration (sklearn)</th><th>Production (BigQuery ML)</th></tr></thead><tbody>
+<tr><td><strong>Tuning budget</strong></td><td>50 Bayesian iterations to find the feature set.</td><td>10 Vizier trials &mdash; only retuning within an already-validated feature set.</td></tr>
+<tr><td><strong>Number of scored variants</strong></td><td>One tuned model.</td><td>Two: AUC-optimized for in-product targeting, recall-optimized for Sales outreach &mdash; because product and Sales have different false-negative costs.</td></tr>
+<tr><td><strong>Eval surface</strong></td><td>AUC only, answering "do more features help."</td><td>AUC + KS + confusion matrix + decile lift, answering "can this drive $4.8M of targeting decisions."</td></tr>
+<tr><td><strong>Encoding</strong></td><td>Target encoding in v1 &mdash; compact, but SHAP values became opaque.</td><td>One-hot in v2 &mdash; purely so each SHAP value maps to a readable feature for stakeholders.</td></tr>
+<tr><td><strong>Calibration</strong></td><td>Never added on either track.</td><td>Still not added &mdash; scores are valid for ranking and decile cuts, not as literal probabilities.</td></tr>
+</tbody></table></div>
+
+<div class="callout warning"><div class="callout-title">The honest note on why AUC moved the "wrong" direction</div><p>The textbook DS-to-production story is that AUC drops after leakage removal and point-in-time correction. Here it went up &mdash; 78.6% in exploration to 82% in production &mdash; because the production track wasn't a re-derivation with fewer features, it was the same pipeline tuned specifically for deployment, with the full downsampling-plus-weighting recipe applied consistently end to end. I'd cross-check that with the KS statistic (0.415) rather than trust AUC alone, and I'd still flag that the score is uncalibrated &mdash; good for ranking, not for reading as a probability.</p></div>
+
+<h2>How to explain the model-eval part, in the interview</h2>
+<ul class="bullet">
+<li>Why not accuracy: at 31% positives, always predicting "no" looks 69% accurate and catches zero real applicants &mdash; need a ranking metric, not a correctness metric.</li>
+<li>Primary metric: AUC-ROC, because the model ranks users rather than classifying at one fixed cutoff. Backed by KS (0.415) as an independent second check, and decile lift (top decile = 43% of applicants at 3&times; rate) as the business-facing translation.</li>
+<li>The gap in AUC: it can look fine even when a model is mediocre on the minority class. PR-AUC is the more honest check specifically for the positive class &mdash; the metric to lean on if anyone questions the recall-optimized variant.</li>
+<li>Two variants, two operating points, not two metrics: AUC-optimized (balanced, for in-product targeting) vs recall-optimized (catches more real applicants, for Sales outreach) &mdash; same model, tuned to where each channel's cost of a false positive vs. false negative differs.</li>
+<li>The senior point to land: the evaluation metric should match the decision the score drives &mdash; that's the answer, not "which single metric is best."</li>
+<li>Offline eval proves the model ranks well. It does not prove targeting caused lift &mdash; that took the 5 randomized experiments against a holdout. Offline tells you the signal is real; the experiment tells you acting on it paid off.</li>
+</ul>
+
+<h2>Which metric to judge each channel's variant on</h2>
+<div class="tbl-wrap"><table><thead><tr><th>Channel</th><th>Variant</th><th>General offline metric</th><th>Sharper, operating-point metric</th><th>Why</th></tr></thead><tbody>
+<tr><td><strong>Product (in-product targeting)</strong></td><td>AUC-optimized</td><td>Decile lift / precision in the targeted band</td><td>Precision@k, where k = the actual number of customers Product can target this week</td><td>Budget is limited &mdash; a false positive wastes a scarce touchpoint, so judge it on: of the people we chose to target, how many actually convert.</td></tr>
+<tr><td><strong>Sales outreach</strong></td><td>Recall-optimized</td><td>PR-AUC, or recall at the team's call capacity</td><td>Recall@k, where k = the actual number of leads Sales can call this month</td><td>No hard cap on who can be called, and the classes are imbalanced. A false negative loses a real prospect, so judge it on: of all real prospects that exist, how many did we surface for a rep to call.</td></tr>
+</tbody></table></div>
+<div class="callout success"><div class="callout-title">The line that ties it together</div><p>Decile lift and PR-AUC tell you the model is good in general. Precision@k and Recall@k tell you the model is good at the exact operating point we'll actually run it at.</p></div>
+
+<h2>Output: exploration vs. production</h2>
+<div class="tbl-wrap"><table><thead><tr><th></th><th>What it produced</th></tr></thead><tbody>
+<tr><td><strong>Exploration output</strong></td><td>An interpretable 70-feature model plus a SHAP narrative: the GTKM "SMS important" flag (+20 pts, 19K high-intent users never touched), the 60% phone-contact threshold (+12 pts, 355K viable users), a &minus;15 pt drop the month after first purchase, and a +8 pt lift from Shopify/integration views. Delivered as a report to PMs and Sales.</td></tr>
+<tr><td><strong>Production output</strong></td><td>Every eligible customer (~1M) scored and decile-ranked, in two variants, refreshed on a schedule, feeding five live product, marketing, and Sales experiments &mdash; the thing that actually produced the $4.8M projected revenue.</td></tr>
+</tbody></table></div>
+
+<div class="callout success"><div class="callout-title">The one-paragraph version to say out loud</div><p>"I built a propensity model to predict SMS application starts because purchase was too sparse and too late to act on. I ran two tracks: an sklearn model to validate the 700-feature set and explain the drivers with SHAP, and a BigQuery ML model that scores every eligible customer in production. Going from exploration to production, I didn't just retrain &mdash; I fixed the encoding so SHAP stayed readable, retuned only within the validated feature set, and shipped two variants because product and Sales needed different precision-recall tradeoffs. The production AUC actually came out higher, which I'd confirm wasn't an artifact before trusting it, and I was upfront that the score still isn't calibrated &mdash; it's built for ranking, not for reading as a probability. That combination is what took the model from a slide to $4.8M of targeting decisions across five experiments."</p></div>
+</div>
+
 <!-- 8f -->
 <div class="tab-panel" data-group="dsml" data-tab="qa">
 <div class="callout info"><div class="callout-title">How to use this</div><p>Spoken answers, in your voice, grounded in the SMS propensity project. Keep the first two sentences tight — depth only if they follow up.</p></div>
@@ -990,6 +1055,7 @@ design effect = 1 + 7 * 0.20 = 2.4
 
 <h2>The general framework — walk every prompt through these six</h2>
 <div class="grid grid-2" style="margin:12px 0"><div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px"><div style="font-weight:600;font-size:13px">1. User need</div><p style="margin-top:3px;color:var(--text2);font-size:12px">Whose problem, exactly, and what does "solved" look like for them? State this before mentioning AI at all.</p></div><div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px"><div style="font-weight:600;font-size:13px">2. Role of AI</div><p style="margin-top:3px;color:var(--text2);font-size:12px">What's the simplest viable approach — a rule, a filter, a template? Only reach for AI where it does something that approach genuinely can't.</p></div><div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px"><div style="font-weight:600;font-size:13px">3. Solution design</div><p style="margin-top:3px;color:var(--text2);font-size:12px">Where does it sit in the flow — assistive draft, ranking, retrieval? Human-in-the-loop by default; automate only where being wrong is cheap.</p></div><div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px"><div style="font-weight:600;font-size:13px">4. Evaluation</div><p style="margin-top:3px;color:var(--text2);font-size:12px">One offline metric that reflects quality, one online metric that reflects whether the outcome from step 1 actually happened.</p></div><div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px"><div style="font-weight:600;font-size:13px">5. Safeguards</div><p style="margin-top:3px;color:var(--text2);font-size:12px">Name the specific failure mode for this feature — not a generic "bias and hallucination" list — and what catches it before a user sees it.</p></div><div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px"><div style="font-weight:600;font-size:13px">6. Rollout</div><p style="margin-top:3px;color:var(--text2);font-size:12px">Opt-in or low-stakes first, a guardrail that must hold before expanding, and a visible way to fall back to the non-AI path.</p></div></div>
+<div class="callout info"><div class="callout-title">Note: size it, fast — inside Step 1, not before it</div><p>Don't open with a dollar figure before you've said whose problem this is — that reads as solution/ROI-first, the exact instinct this case study is designed to catch. But right after stating the user need, one back-of-envelope sentence on rough size ("if this touches even 10% of X and moves Y by a few points, that's worth a real look") makes "solved" concrete instead of vague — and gives you the number to hold the model accountable to later, at the evaluation step. Keep it directional and one sentence; this case study is graded on the full framework, not on sizing depth.</p></div>
 <div class="callout success"><div class="callout-title">The opening line to use on any prompt</div><p>"Before I get to the AI part — who exactly is stuck today, and what would 'unstuck' look like for them? I want to make sure AI is solving that, not just making the feature more impressive."</p></div>
 
 <details><summary>Measurement — three layers, never one blended score <span class='pill neutral'>reusable on any prompt</span></summary><div class="details-body">
@@ -1027,20 +1093,19 @@ design effect = 1 + 7 * 0.20 = 2.4
 </div></details>
 
 <details><summary>Rollout — an operational launch plan, not a feature flag <span class='pill neutral'>reusable on any prompt</span></summary><div class="details-body">
-<ul class="bullet">
-<li><strong>1. Internal dogfood</strong> &mdash; Handshake's own recruiters or a small pilot group first.</li>
-<li><strong>2. Opt-in beta</strong> &mdash; a small, self-selected set of employers.</li>
-<li><strong>3. Draft-only / shadow mode</strong> &mdash; AI generates, nothing auto-publishes.</li>
-<li><strong>4. Guarded expansion</strong> &mdash; widen access only when the gate thresholds below hold.</li>
-<li><strong>5. A/B test on eligible users</strong> &mdash; AI-assisted vs control on time-to-publish, acceptance, qualified applications.</li>
-<li><strong>6. Manual path stays available permanently</strong> &mdash; never force AI.</li>
-</ul>
+<div class="tbl-wrap"><table><thead><tr><th>Stage</th><th>Why / when to use it</th></tr></thead><tbody>
+<tr><td><strong>1. Internal dogfood</strong></td><td>Handshake's own recruiters or a small pilot group first. Cheapest, fastest way to catch broken prompts and obvious compliance gaps before any real employer is exposed. Run this first, always &mdash; before anyone external sees it.</td></tr>
+<tr><td><strong>2. Opt-in beta</strong></td><td>A small, self-selected set of employers. Use once dogfooding is clean, to get real edit-rate and acceptance-rate signal from actual customers. Low-risk because participants chose in and the group is too small to move company-wide numbers on a bad batch.</td></tr>
+<tr><td><strong>3. A/B test, gated by hard thresholds</strong></td><td>AI-assisted vs control on time-to-publish, acceptance, and qualified applications. Use before this becomes the default experience or gets promoted broadly &mdash; the only stage that proves causal impact rather than self-selected feedback. Gate wider access on compliance rate and no drop in qualified-application rate, not on vibes.</td></tr>
+</tbody></table></div>
+<div class="callout success"><div class="callout-title">Final recommendation</div><p>Run all three in that order &mdash; never skip straight to the A/B test. Dogfooding and the opt-in beta are what make the A/B test safe to run at all: by the time you get there, the embarrassing failures are already caught, so the test is measuring real quality, not catching bugs. Two things run underneath all three stages, not as separate steps: the human always reviews and edits before anything publishes, and the plain manual path never goes away.</p></div>
 <div class="tbl-wrap"><table><thead><tr><th>Gate</th><th>Threshold to clear before expanding</th></tr></thead><tbody>
 <tr><td>Policy-violation rate (missing compliance language, disallowed phrasing)</td><td>Below target &mdash; e.g. &lt;0.5% of published AI-assisted output</td></tr>
 <tr><td>Compliance-field completion (salary transparency where required)</td><td>Above target &mdash; e.g. &ge;99%</td></tr>
 <tr><td>Qualified-application rate</td><td>No statistically significant drop vs control</td></tr>
 <tr><td>Repeat usage in the beta cohort</td><td>Positive &mdash; beta users come back on their next posting</td></tr>
 </tbody></table></div>
+<p style="color:var(--text3);font-size:12px;margin:4px 0 0">Keep an eye out for novelty &mdash; a first-look usage spike that fades once the "new thing" feeling wears off (same pattern as the x397 contact-import banner: CTR fell ~27% a month post-launch). Repeat usage, not first-use adoption, is what tells the two apart.</p>
 <div class="callout info"><div class="callout-title">Fallbacks to have ready</div>
 <ul class="bullet">
 <li>Template-only mode.</li>
@@ -1126,6 +1191,11 @@ design effect = 1 + 7 * 0.20 = 2.4
 <tr><td><strong>Rejection-reason rate</strong></td><td>% of drafts discarded, split by reason: hallucination, bias, missing info, tone</td><td>Which failure mode dominates</td></tr>
 <tr><td><strong>Policy-violation rate</strong></td><td>% of outputs missing required compliance language or containing disallowed phrasing</td><td>Safety</td></tr>
 </tbody></table></div>
+<div class="callout warning"><div class="callout-title">Two metrics I'd deliberately not lean on</div>
+<ul class="bullet">
+<li>Time to publish, as a raw elapsed-time number &mdash; this isn't a time-bound funnel. An employer can start a draft and come back days later while waiting on a hiring manager for a salary band or legal sign-off. Raw minutes conflates "the AI made drafting faster" with "how long it took to gather inputs outside the tool's control." I wouldn't report it as a standalone speed metric.</li>
+<li>Raw edit count &mdash; a high count can mean two very different things: the employer added real detail the AI couldn't have known (not a flaw), or the AI produced something needing heavy correction (a real flaw). A count can't tell those apart, and reliably measuring "an edit" from stored draft-vs-published text is itself hard. I'd lean on acceptance rate (published with only minor edits) instead &mdash; a threshold judgment, not a precise count.</li>
+</ul></div>
 </div></details>
 
 <details><summary>Human-in-the-loop, failure modes, and live monitoring <span class='pill neutral'>full-depth version</span></summary><div class="details-body">
@@ -1142,6 +1212,22 @@ design effect = 1 + 7 * 0.20 = 2.4
 <li>Age/gender-coded or otherwise discriminatory phrasing.</li>
 <li>Over-reliance producing homogenous, templated postings that stop differentiating employers.</li>
 <li>Low trust &mdash; employers try it once, don't believe the output, and abandon it.</li>
+</ul>
+<div style="font-size:11px;color:var(--text3);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:12px">Guardrails &mdash; metric, owner, why needed</div>
+<div class="tbl-wrap"><table><thead><tr><th>Guardrail metric</th><th>Owner</th><th>Why needed</th></tr></thead><tbody>
+<tr><td>Bias-flag rate &mdash; % of drafts triggering &ge;1 term on a coded-language lexicon</td><td>DS defines + monitors</td><td>Catches discriminatory / age- or gender-coded phrasing before an employer sees it</td></tr>
+<tr><td>Fabrication rate &mdash; % of sampled drafts with &ge;1 requirement not traceable to employer input</td><td>ML/Relevance builds detector; DS sets threshold</td><td>Catches hallucinated requirements the employer never stated</td></tr>
+<tr><td>Compliance-field completion rate &mdash; % of drafts with the legally-required field populated</td><td>DS/Eng &mdash; rules lookup, not a model</td><td>Guards against omitted legal disclosures (salary transparency, EEO); target ~100%, hard gate</td></tr>
+<tr><td>Auto-publish rate</td><td>Engineering</td><td>System invariant, not a metric with expected variance &mdash; target exactly 0%</td></tr>
+<tr><td>Edit-after-publish rate &mdash; % of AI-assisted postings edited again within 7 days of going live</td><td>DS defines + monitors</td><td>Catches quality issues that slipped past pre-publish review &mdash; a compliance field or hallucinated requirement fixed only after going live is a stronger signal than anything caught before publish. Watch the compliance-relevant share separately from cosmetic fixes.</td></tr>
+</tbody></table></div>
+<div style="font-size:11px;color:var(--text3);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:12px">Segment cuts to apply to every metric above</div>
+<ul class="bullet">
+<li>State / region &mdash; highest priority. Compliance-field completion is state-dependent by law (salary-transparency requirements vary by state), so a blended completion rate can hide 100% compliance in states that require it and pure noise in states that don't.</li>
+<li>Industry / job family &mdash; fabrication risk isn't even. A model is more likely to invent a plausible-sounding but wrong certification or tool requirement in a niche vertical (skilled trades, healthcare licensure) than in a job family it's seen heavily (generic tech/retail).</li>
+<li>New vs. experienced poster (posting tenure) &mdash; a first-time poster has no baseline to sanity-check the draft against and may publish uncritically; a veteran poster catches errors first. Same edit-rate number means something different for each.</li>
+<li>Employment type &mdash; FTE vs. internship vs. contract/hourly &mdash; different content norms, and compliance rules can apply differently by type.</li>
+<li>SMB vs. Enterprise, plan tier, posting volume, employer headcount &mdash; the broader business segments from the Customer Segments tab; still apply here, just lower-priority than the four above for this specific feature.</li>
 </ul>
 <div style="font-size:11px;color:var(--text3);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:12px">Operational monitoring, post-launch</div>
 <ul class="bullet">
