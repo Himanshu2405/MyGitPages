@@ -311,6 +311,112 @@ a { color: var(--accent); }
 </ul>
 </div>
 </details>
+
+<h2>Practice questions — full worked diagnosis</h2>
+<div class="callout info"><div class="callout-title">Prompt style to expect</div><p>"MXN→USD corridor conversion dropped 15% month over month — walk me through your diagnosis." Every prompt below is worked end to end: clarifying questions → segments to check → a suspect table → the likely finding → a recommendation with an owner.</p></div>
+
+<details><summary>MXN→USD corridor conversion rate dropped 15% MoM <span class="pill neutral">funnel rate, the case-study corridor</span></summary>
+<div class="details-body">
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Clarifying questions</div>
+<ul class="bullet"><li>Conversion = completed ÷ initiated transfers. Over what window — same-day, or a 7-day completion allowance?</li><li>MoM or same-period YoY? Remittance volume is seasonal around paydays and holidays.</li><li>Which funnel step actually dropped — KYC approval, FX-rate confirmation, or payout?</li><li>Same mix of new vs. repeat senders as the prior month?</li></ul>
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin:10px 0"><span class="pill neutral" style="margin:0">KYC status</span><span class="pill neutral" style="margin:0">Transfer-size tier</span><span class="pill neutral" style="margin:0">New vs. repeat sender</span><span class="pill neutral" style="margin:0">Payout method</span><span class="pill neutral" style="margin:0">Day of month (payday cycle)</span></div>
+<div class="tbl-wrap"><table><thead><tr><th>Suspect</th><th>How to check</th><th>Wise-specific angle</th></tr></thead><tbody>
+<tr><td><strong>KYC/compliance tightening</strong></td><td>Plot KYC pass rate for this corridor specifically, before vs. after.</td><td>An enhanced-verification rule for cash-heavy sender profiles is exactly the kind of change that hits one corridor's funnel without touching the global number.</td></tr>
+<tr><td><strong>Payout-partner issue</strong></td><td>Payout success rate at the final step, this corridor only.</td><td>MXN payout relies on a specific local gateway partner — a partner-side outage shows up as a corridor-specific cliff, not a global one.</td></tr>
+<tr><td><strong>FX-rate volatility at confirmation</strong></td><td>Drop-off specifically at the rate-confirmation screen, correlated with peso volatility that week.</td><td>A customer who sees a worse rate than expected at the final confirmation step abandons right there — a real behavioral effect, not a bug.</td></tr>
+<tr><td><strong>Seasonality</strong></td><td>Compare the same calendar week YoY, not raw MoM.</td><td>Remittance sends cluster around paydays and Mexican holidays — a MoM comparison can span very different points in that cycle.</td></tr>
+<tr><td><strong>Instrumentation</strong></td><td>Check whether the "completed" status definition or event changed recently.</td><td>The case study's own Android-mislabeling story is the reminder to check this first, not last.</td></tr>
+</tbody></table></div>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Isolate / likely finding</div>
+<p style="color:var(--text2);margin-top:4px">Suppose the KYC pass rate for this corridor fell from 92% to 81% specifically, coinciding with an enhanced-verification rule rolled out three weeks earlier for cash-heavy sender profiles. Every other funnel step is flat. This is compliance-driven friction, not a demand problem.</p>
+<div class="callout success"><div class="callout-title">Recommendation</div><p>Report corridor conversion split by funnel step and by KYC-rule cohort so a compliance-driven change doesn't read as a demand collapse. Work with the compliance team on whether the verification bar can be risk-tiered rather than blanket, and track KYC pass rate as a standing companion metric on every new policy rollout — the direct application of Focus Area 2's "cost of your logic" framing.</p></div>
+</div>
+</details>
+
+<details><summary>North America take rate compressed 8bps QoQ — steeper than the 6bps global average <span class="pill neutral">mix vs. price</span></summary>
+<div class="details-body">
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Clarifying questions</div>
+<ul class="bullet"><li>Is the decline mix-driven (more Business or larger transfers) or price-driven (an actual rate cut)?</li><li>What's the Personal vs. Business revenue split in the region, this quarter vs. last?</li><li>Any active promotional pricing specific to North America?</li></ul>
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin:10px 0"><span class="pill neutral" style="margin:0">Personal vs. Business</span><span class="pill neutral" style="margin:0">Transfer-size tier</span><span class="pill neutral" style="margin:0">Corridor within region</span><span class="pill neutral" style="margin:0">New vs. repeat</span></div>
+<div class="tbl-wrap"><table><thead><tr><th>Suspect</th><th>How to check</th><th>Wise-specific angle</th></tr></thead><tbody>
+<tr><td><strong>Mix shift to Business</strong></td><td>Personal vs. Business share of regional volume, this quarter vs. last.</td><td>Business accounts get volume-based pricing tiers with a structurally lower blended take rate — more Business volume mechanically compresses the regional average.</td></tr>
+<tr><td><strong>Promotional pricing</strong></td><td>Active promo codes or intro-rate campaigns live in the region.</td><td>A regional growth push can look identical to organic price erosion in the topline number.</td></tr>
+<tr><td><strong>Competitive response</strong></td><td>Win/loss notes, marketing spend timing.</td><td>Wise doesn't always have internal telemetry on competitor moves — flag this as directional, not provable from internal data alone.</td></tr>
+<tr><td><strong>Large-transfer mix shift</strong></td><td>Transfer-size distribution, this quarter vs. last.</td><td>Volume-discount tiers mean a handful of large transfers can move the blended rate meaningfully.</td></tr>
+</tbody></table></div>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Isolate / likely finding</div>
+<p style="color:var(--text2);margin-top:4px">Suppose Business-account volume in North America grew from 20% to 31% of regional volume this quarter, while the Personal-only take rate is flat. This is a mix effect from a Business-acquisition win, not price erosion — and treating it as the latter would mean second-guessing a genuinely good outcome.</p>
+<div class="callout success"><div class="callout-title">Recommendation</div><p>Report take rate split by Personal/Business, and add a mix-adjusted (like-for-like) take rate as a standing companion metric so a strategic acquisition win doesn't trigger a false alarm on the headline number.</p></div>
+</div>
+</details>
+
+<details><summary>Wise Card active-card rate lags multi-currency Account signups by a growing gap <span class="pill neutral">activation gap</span></summary>
+<div class="details-body">
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Clarifying questions</div>
+<ul class="bullet"><li>Does "active card" include virtual cards, or only physical cards used in the last 30 days?</li><li>What's the typical ship time for a physical card in the markets driving new signups?</li><li>Does a card need a funded balance before it can be used?</li></ul>
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin:10px 0"><span class="pill neutral" style="margin:0">Physical vs. virtual</span><span class="pill neutral" style="margin:0">Market</span><span class="pill neutral" style="margin:0">Account-tenure cohort</span><span class="pill neutral" style="margin:0">Ordered vs. activated vs. used</span></div>
+<div class="tbl-wrap"><table><thead><tr><th>Suspect</th><th>How to check</th><th>Wise-specific angle</th></tr></thead><tbody>
+<tr><td><strong>Shipping delay</strong></td><td>Days from card order to first use, by market.</td><td>A physical card is useless until it arrives — this is a pure logistics gap that can masquerade as low interest.</td></tr>
+<tr><td><strong>Card ordering not surfaced</strong></td><td>Share of new accounts that even reach the card-order screen.</td><td>If the card isn't prompted post-signup, the "gap" is a discovery problem, not a fulfillment one.</td></tr>
+<tr><td><strong>Funding friction</strong></td><td>Balance-funding rate among customers who ordered but haven't used the card.</td><td>The card is worthless without a funded balance — a card-only funnel view misses this dependency.</td></tr>
+<tr><td><strong>Market mix shift</strong></td><td>Share of new signups from slower-shipping markets, over time.</td><td>Growth in a market with a longer postal chain will widen the gap mechanically even with flat behavior.</td></tr>
+</tbody></table></div>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Isolate / likely finding</div>
+<p style="color:var(--text2);margin-top:4px">Suppose card orders are flat as a share of signups, but median ship-to-first-use time in newer signup markets is 21 days vs. 9 days in mature markets — and new-signup mix has shifted toward those markets. The gap is geography and logistics, not lost interest.</p>
+<div class="callout success"><div class="callout-title">Recommendation</div><p>Report card activation as virtual + physical combined, split by shipping cohort, and consider instant virtual-card issuance as a bridge metric while the physical card ships (see the matching A/B test in the next tab).</p></div>
+</div>
+</details>
+
+<details><summary>USD Interest opt-in rate is healthy, but 90-day balance retention is falling <span class="pill neutral">retention, not acquisition</span></summary>
+<div class="details-body">
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Clarifying questions</div>
+<ul class="bullet"><li>Retention = still holding a balance and still opted-in at day 90?</li><li>How has Wise's APY moved relative to competitor high-yield accounts over the same window?</li><li>Were any balances seeded by a one-time promotional transfer rather than organic funding?</li></ul>
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin:10px 0"><span class="pill neutral" style="margin:0">Funding source</span><span class="pill neutral" style="margin:0">Balance-size tier</span><span class="pill neutral" style="margin:0">Acquisition channel/promo</span><span class="pill neutral" style="margin:0">Tenure</span></div>
+<div class="tbl-wrap"><table><thead><tr><th>Suspect</th><th>How to check</th><th>Wise-specific angle</th></tr></thead><tbody>
+<tr><td><strong>Competitive rate compression</strong></td><td>Benchmark Wise's variable APY against a basket of competitor high-yield rates over time.</td><td>Interest is a genuinely comparison-shopped feature — customers actively track and switch on rate, unlike a sticky payments product.</td></tr>
+<tr><td><strong>One-time promo funding</strong></td><td>Whether churned balances disproportionately trace to a specific promotional push.</td><td>A balance seeded for a signup bonus was never meant to stay — it's not real retention loss.</td></tr>
+<tr><td><strong>FDIC-cap-driven withdrawal</strong></td><td>Whether churn concentrates in balances approaching the $250K pass-through insurance cap.</td><td>Large-balance customers actively manage around the FDIC ceiling — a structural, not dissatisfaction-driven, behavior.</td></tr>
+<tr><td><strong>Seasonal drawdown</strong></td><td>Balance trend around known high-spend seasons (e.g. year-end).</td><td>A balance is money waiting to be spent — some drawdown is the feature working as intended, not churn.</td></tr>
+</tbody></table></div>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Isolate / likely finding</div>
+<p style="color:var(--text2);margin-top:4px">Suppose churned balances cluster heavily among customers who opted in during a specific rate-promotion window, and the drop coincides with a named competitor's headline rate moving above Wise's. This is comparison-shopping behavior, not dissatisfaction with the product itself.</p>
+<div class="callout success"><div class="callout-title">Recommendation</div><p>Track opt-in cohorts by acquisition channel, benchmark Wise's rate against competitors as a standing input rather than a one-off check, and consider a rate-match or loyalty lever targeted at large, tenured balances instead of broad acquisition marketing.</p></div>
+</div>
+</details>
+
+<details><summary>First-transfer activation rate fell right after a KYC policy tightening in one market <span class="pill neutral">compliance vs. conversion tradeoff</span></summary>
+<div class="details-body">
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Clarifying questions</div>
+<ul class="bullet"><li>Was this policy change planned and compliance-driven, or an unplanned regression?</li><li>Did approval SLA (submission-to-decision time) change, or just the document requirements?</li><li>Is the drop concentrated in abandonment mid-flow, or in outright rejections?</li></ul>
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin:10px 0"><span class="pill neutral" style="margin:0">Market</span><span class="pill neutral" style="margin:0">Document type</span><span class="pill neutral" style="margin:0">Risk tier</span><span class="pill neutral" style="margin:0">Auto vs. manual review</span></div>
+<div class="tbl-wrap"><table><thead><tr><th>Suspect</th><th>How to check</th><th>Wise-specific angle</th></tr></thead><tbody>
+<tr><td><strong>Expected compliance tradeoff</strong></td><td>Confirm the KYC pass-rate move lines up exactly with the policy-change date.</td><td>If it's a deliberate, planned tightening, the honest framing is "expected cost of the logic," not a bug to fix.</td></tr>
+<tr><td><strong>Manual-review backlog</strong></td><td>Approval SLA (submission to decision), before vs. after.</td><td>More documents routed to manual review can lengthen wait time enough that customers abandon before ever being rejected.</td></tr>
+<tr><td><strong>False-positive rejections</strong></td><td>Appeals/override rate on rejected applications, if available.</td><td>Distinguishes "the bar is too high" from "the bar is fine but the review process is misfiring."</td></tr>
+<tr><td><strong>UX friction from new documents</strong></td><td>Step-level drop-off within the KYC flow itself, before submission.</td><td>A confusing new document requirement can lose customers before they even reach a compliance decision.</td></tr>
+</tbody></table></div>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Isolate / likely finding</div>
+<p style="color:var(--text2);margin-top:4px">Suppose approval SLA lengthened from 2 hours to 26 hours after the policy change, because more applications now route to manual review — and most of the activation drop is customers abandoning mid-wait, not being rejected. The compliance bar itself may be right; the operational capacity to clear it fast enough is the actual gap.</p>
+<div class="callout success"><div class="callout-title">Recommendation</div><p>Separate "compliance decision quality" from "compliance operational speed" as two distinct tracked metrics. If the policy itself is non-negotiable, the fix is review-queue staffing or automation, not loosening the rule — say this distinction out loud, it's precisely Focus Area 2's "cost of your logic" question.</p></div>
+</div>
+</details>
+
+<details><summary>Wise Business signups are up, but time-to-first-transfer (KYB) is also up <span class="pill neutral">business/KYB funnel</span></summary>
+<div class="details-body">
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Clarifying questions</div>
+<ul class="bullet"><li>Has the business-type/vertical mix of new signups shifted?</li><li>Did the marketing channel mix change (a new partnership or campaign)?</li><li>Is KYB review capacity scaled to the new signup volume?</li></ul>
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin:10px 0"><span class="pill neutral" style="margin:0">Business vertical</span><span class="pill neutral" style="margin:0">Company age</span><span class="pill neutral" style="margin:0">Jurisdiction</span><span class="pill neutral" style="margin:0">Acquisition channel</span></div>
+<div class="tbl-wrap"><table><thead><tr><th>Suspect</th><th>How to check</th><th>Wise-specific angle</th></tr></thead><tbody>
+<tr><td><strong>Vertical mix shift</strong></td><td>Share of signups from higher-risk verticals (e.g. money-service businesses, cash-heavy industries) requiring enhanced due diligence.</td><td>Enhanced due diligence is slower by design — a mix shift toward these verticals raises the average time-to-transfer with zero operational change.</td></tr>
+<tr><td><strong>Review capacity gap</strong></td><td>KYB reviewer headcount/throughput vs. signup volume trend.</td><td>A marketing win that outpaces compliance staffing creates a queue, not a policy problem.</td></tr>
+<tr><td><strong>Unclear documentation requirements</strong></td><td>Drop-off/resubmission rate before KYB review even begins.</td><td>If the product doesn't clearly state what's needed upfront, customers submit incomplete applications that bounce back and forth.</td></tr>
+<tr><td><strong>Channel mix change</strong></td><td>Time-to-transfer split by acquisition channel.</td><td>A new partnership channel can bring a systematically different (and slower-to-verify) applicant pool.</td></tr>
+</tbody></table></div>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Isolate / likely finding</div>
+<p style="color:var(--text2);margin-top:4px">Suppose a new partnership specifically targeted e-commerce sellers — a vertical requiring extra document collection — and their share of Business signups jumped, while time-to-transfer for the pre-existing vertical mix stayed flat. The average moved because the mix moved, not because anything got slower for any single business.</p>
+<div class="callout success"><div class="callout-title">Recommendation</div><p>Report KYB time-to-transfer split by vertical/risk tier as a standard cut, and size the enhanced-due-diligence review team to the new mix rather than judging it against the old blended average.</p></div>
+</div>
+</details>
 </div>
 
 <!-- ================= A/B TEST DESIGN ================= -->
@@ -332,15 +438,100 @@ a { color: var(--accent); }
 <li><strong>Minimal network effects:</strong> unlike a marketplace, one customer's transfer doesn't directly affect another's experience, so simple randomization mostly holds — the exception is shared FX-rate/liquidity pools within a corridor.</li>
 </ul>
 
-<details>
-<summary>Example test design — tie back to the case study corridor</summary>
+<h2>Experiment prompts — full worked designs</h2>
+
+<details><summary>Lower the take rate on the MXN→USD corridor by 10bps <span class="pill neutral">pricing, the case-study corridor</span></summary>
 <div class="details-body">
-<ul class="bullet">
-<li><strong>Hypothesis:</strong> lowering the take rate on the MXN→USD corridor by X bps increases conversion rate enough to grow net corridor revenue, not just volume.</li>
-<li><strong>Primary metric:</strong> corridor net revenue (not just conversion — a lower take rate that only grows volume proportionally is neutral or worse).</li>
-<li><strong>Guardrails:</strong> corridor conversion rate, cost-to-serve per transfer, complaint/support-ticket rate.</li>
-<li><strong>Randomization unit:</strong> customer, stratified by whether they've used this corridor before (new vs. repeat sender behave very differently on price sensitivity).</li>
-</ul>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Hypothesis</div>
+<p style="color:var(--text2);margin-top:4px">If we lower the take rate on the MXN→USD corridor by 10bps, then corridor conversion rate and net corridor revenue both rise within one quarter, because price sensitivity is the dominant driver of drop-off at the rate-confirmation step for this sender segment.</p>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Randomization unit</div>
+<p style="color:var(--text2);margin-top:4px">Customer-level within the corridor, stratified by new vs. repeat sender — repeat senders are far less price-elastic, so pooling them dilutes the effect. Watch for corridor-routing leakage: a customer sending via an intermediate currency to dodge the price would contaminate control.</p>
+<div class="grid grid-3" style="margin:12px 0">
+<div><div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Primary</div><p style="color:var(--text2);margin-top:4px">Corridor net revenue — not conversion alone, since a rate cut that only grows volume proportionally is neutral or worse.</p></div>
+<div><div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Secondary</div><p style="color:var(--text2);margin-top:4px">Corridor conversion rate, transfers per active corridor customer, average transfer size.</p></div>
+<div><div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Guardrails</div><p style="color:var(--text2);margin-top:4px">Cost-to-serve per transfer, support/complaint ticket rate, take rate in adjacent corridors (routing-leakage check).</p></div>
+</div>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Sizing</div>
+<p style="color:var(--text2);margin-top:4px">Cross-border transfers are low-frequency per customer, so a full read needs roughly one remittance cycle (4–8 weeks); use transfer-initiated rate as an earlier-reading guardrail while net revenue is still noisy.</p>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Gotchas &amp; caveats</div>
+<ul class="bullet"><li>Corridor-routing leakage — a customer dodging the price via an intermediate currency contaminates the control arm.</li><li>Regulatory review gate: pricing changes may require compliance sign-off before launch in some markets — this can dominate the timeline more than the statistics do.</li><li>Transfer amounts are heavily right-skewed (a few large business transfers dominate) — use CUPED with pre-period volume for variance reduction.</li></ul>
+<div class="callout success"><div class="callout-title">Decision rule</div><p>Ship only if net corridor revenue improves or holds while conversion rises meaningfully. A rate cut that only proportionally grows volume without lifting net revenue is not a win.</p></div>
+</div>
+</details>
+
+<details><summary>Redesign KYC document upload (guided capture + auto-detection) <span class="pill neutral">compliance funnel</span></summary>
+<div class="details-body">
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Hypothesis</div>
+<p style="color:var(--text2);margin-top:4px">If we simplify document capture with guided camera capture and auto document-type detection, then KYC pass rate rises without an increase in false-negative fraud approvals, because most current failures are blurry or mismatched uploads, not actual fraud attempts.</p>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Randomization unit</div>
+<p style="color:var(--text2);margin-top:4px">Customer-level at KYC-submission entry, stratified by market (document rules vary by jurisdiction) and device type (camera quality varies). Analyze per-market, not pooled globally — a global average can hide a market where the change made things worse.</p>
+<div class="grid grid-3" style="margin:12px 0">
+<div><div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Primary</div><p style="color:var(--text2);margin-top:4px">KYC pass rate (RATE) — approved ÷ submitted, within a fixed decision window.</p></div>
+<div><div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Secondary</div><p style="color:var(--text2);margin-top:4px">Time-to-decision, resubmission rate, first-time-pass rate.</p></div>
+<div><div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Guardrails</div><p style="color:var(--text2);margin-top:4px">Fraud/false-negative rate (approvals later flagged), manual-review queue volume, compliance sign-off status per market.</p></div>
+</div>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Sizing</div>
+<p style="color:var(--text2);margin-top:4px">Signup/KYC is typically the largest funnel step, so this is well-powered on a rate metric within days to a couple of weeks per market — but treat each market as its own read given differing document rules.</p>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Gotchas &amp; caveats</div>
+<ul class="bullet"><li>An "easier" submission flow that doesn't actually improve image quality can just shift failures downstream into the manual-review queue — track that volume as a guardrail, not an afterthought.</li><li>Most markets require compliance review before this can even launch — build that into the timeline.</li><li>Effect size will vary a lot by market's document rules; never report a single pooled global number.</li></ul>
+<div class="callout success"><div class="callout-title">Decision rule</div><p>Ship if KYC pass rate improves and neither the false-negative fraud rate nor the manual-review load worsens.</p></div>
+</div>
+</details>
+
+<details><summary>Prompt customers to opt into USD Interest right after their first deposit <span class="pill neutral">activation / retention</span></summary>
+<div class="details-body">
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Hypothesis</div>
+<p style="color:var(--text2);margin-top:4px">If we prompt customers to opt into Interest immediately after their first qualifying deposit instead of leaving it a self-discovered setting, then 90-day balance retention rises, because the dominant failure mode today is "forgot the feature exists," not "evaluated it and declined."</p>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Randomization unit</div>
+<p style="color:var(--text2);margin-top:4px">Customer-level at the moment of first qualifying deposit, excluding NY/AK residents since the feature isn't available to them — state that exclusion explicitly rather than letting it silently shrink the sample.</p>
+<div class="grid grid-3" style="margin:12px 0">
+<div><div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Primary</div><p style="color:var(--text2);margin-top:4px">90-day balance retention (RATE) — still holding a qualifying balance and still opted-in at day 90.</p></div>
+<div><div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Secondary</div><p style="color:var(--text2);margin-top:4px">Opt-in rate, average balance size, time-to-opt-in.</p></div>
+<div><div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Guardrails</div><p style="color:var(--text2);margin-top:4px">Interest/FDIC-related support tickets, 7-day opt-out rate (rushed/confused opt-ins), total balance funded (avoid cannibalizing Card spend).</p></div>
+</div>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Sizing</div>
+<p style="color:var(--text2);margin-top:4px">Large denominator (every newly-funded customer) but the 90-day window is the binding constraint on speed — watch 7-day opt-in and 30-day retention as early reads before the full-window result is in.</p>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Gotchas &amp; caveats</div>
+<ul class="bullet"><li>Prompting right at deposit time can catch customers who funded the balance only to immediately spend it — watch for a spike in opt-ins reversed within days.</li><li>A competitor rate change mid-test can swamp the treatment effect entirely — track a rate-benchmark guardrail throughout.</li></ul>
+<div class="callout success"><div class="callout-title">Decision rule</div><p>Ship if 90-day retention improves without a rise in early opt-outs or interest/FDIC-related support tickets.</p></div>
+</div>
+</details>
+
+<details><summary>Issue an instant virtual card at signup, not just a physical card <span class="pill neutral">activation gap</span></summary>
+<div class="details-body">
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Hypothesis</div>
+<p style="color:var(--text2);margin-top:4px">If new customers get an instantly-issued virtual card at signup instead of only being offered a physical card that ships in days to weeks, then 30-day card-active rate rises, because the current gap is shipping time, not a lack of interest.</p>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Randomization unit</div>
+<p style="color:var(--text2);margin-top:4px">Customer-level at signup, stratified by market — pre-declare the slow-shipping-market subgroup as the primary read, since that's where the mechanism predicts the largest effect.</p>
+<div class="grid grid-3" style="margin:12px 0">
+<div><div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Primary</div><p style="color:var(--text2);margin-top:4px">30-day card-active rate (RATE) — ≥1 transaction on virtual or physical card within 30 days of signup.</p></div>
+<div><div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Secondary</div><p style="color:var(--text2);margin-top:4px">Time-to-first-card-transaction, virtual-to-physical upgrade rate, balance-funding rate.</p></div>
+<div><div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Guardrails</div><p style="color:var(--text2);margin-top:4px">Fraud/chargeback rate on virtual cards, card-confusion support tickets, physical-card order rate (cannibalization check).</p></div>
+</div>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Sizing</div>
+<p style="color:var(--text2);margin-top:4px">Signup volume is large and this is a 30-day rate metric — well-powered within a few weeks globally; the real analysis is the stratified slow-shipping-market subgroup, not the pooled average.</p>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Gotchas &amp; caveats</div>
+<ul class="bullet"><li>If virtual-card use fully substitutes for physical-card orders, that could weaken the more durable physical-card relationship — track physical order rate as a real guardrail, not a curiosity.</li><li>A card still needs a funded balance to spend — this test really measures "discovery + funding," not card issuance in isolation.</li></ul>
+<div class="callout success"><div class="callout-title">Decision rule</div><p>Ship if 30-day active rate improves — especially in slow-shipping markets — without meaningfully cannibalizing physical card orders.</p></div>
+</div>
+</details>
+
+<details><summary>Pre-fill Wise Business signup from a business-registry API lookup <span class="pill neutral">KYB / business onboarding</span></summary>
+<div class="details-body">
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Hypothesis</div>
+<p style="color:var(--text2);margin-top:4px">If we pre-fill business details from a registry lookup instead of requiring manual entry, then time-to-first-transfer for new Business accounts falls, because a large share of current drop-off happens during manual data entry, not during actual compliance review.</p>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Randomization unit</div>
+<p style="color:var(--text2);margin-top:4px">Business-account level at signup, stratified by vertical/risk tier — enhanced-due-diligence verticals need review time regardless of intake speed, so the effect should concentrate in standard-risk businesses.</p>
+<div class="grid grid-3" style="margin:12px 0">
+<div><div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Primary</div><p style="color:var(--text2);margin-top:4px">Time-to-first-transfer (CONTINUOUS, right-skewed — report the median, not the mean).</p></div>
+<div><div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Secondary</div><p style="color:var(--text2);margin-top:4px">Application completion rate, registry-mismatch correction rate, KYB approval rate.</p></div>
+<div><div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase">Guardrails</div><p style="color:var(--text2);margin-top:4px">Fraud/risk-flag rate (a bad registry match approving a business it shouldn't), manual-review volume, abandonment at the lookup step itself.</p></div>
+</div>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Sizing</div>
+<p style="color:var(--text2);margin-top:4px">Business signups are a far smaller population than personal ones — one of the least powerable tests here. Use a continuous/median primary rather than a binary one to extract more signal per unit, and plan for a longer run or a larger minimum detectable effect.</p>
+<div class="tag" style="font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:10px;display:block">Gotchas &amp; caveats</div>
+<ul class="bullet"><li>Registry data can be stale or mismatched, especially for newer businesses — that subset could get slower, not faster; segment it out before claiming a win.</li><li>Enhanced-due-diligence verticals won't benefit no matter how fast intake is — don't let a pooled average hide that this is a standard-risk-tier-only win.</li></ul>
+<div class="callout success"><div class="callout-title">Decision rule</div><p>Ship if median time-to-first-transfer falls for standard-risk businesses without a rise in fraud/risk-flag rate or lookup-step abandonment.</p></div>
 </div>
 </details>
 </div>
