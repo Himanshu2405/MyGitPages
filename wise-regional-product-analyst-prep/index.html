@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wise — Senior Product Analyst Interview Prep</title>
+<style>
+:root {
+  --bg: #0f0f0f;
+  --bg2: #1a1a1a;
+  --bg3: #242424;
+  --border: #2e2e2e;
+  --text: #e8e8e8;
+  --text2: #a0a0a0;
+  --text3: #666;
+  --accent: #4f8ef7;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --neutral: #6b7280;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; line-height: 1.6; }
+.container { max-width: 1040px; margin: 0 auto; padding: 32px 24px; }
+h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+h2 { font-size: 18px; font-weight: 600; margin: 24px 0 10px; }
+h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; }
+p  { color: var(--text2); margin: 6px 0; }
+.subtitle { color: var(--text2); margin-bottom: 20px; }
+
+/* Tab nav */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 4px; }
+.tab-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 999px; background: transparent; color: var(--text2); cursor: pointer; font-size: 13px; transition: all .15s; }
+.tab-btn:hover { border-color: var(--accent); color: var(--text); }
+.tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+/* Cards */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; }
+.card-header { padding: 12px 16px; font-weight: 600; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.card-body { padding: 14px 16px; }
+.grid { display: grid; gap: 14px; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+.grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+@media(max-width:700px){ .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
+
+/* Callouts */
+.callout { border-left: 4px solid var(--neutral); background: var(--bg2); border-radius: 0 6px 6px 0; padding: 12px 14px; margin: 10px 0; }
+.callout-title { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.callout.success { border-color: var(--success); }
+.callout.warning { border-color: var(--warning); }
+.callout.danger  { border-color: var(--danger);  }
+.callout.info    { border-color: var(--info);    }
+.callout.success .callout-title { color: var(--success); }
+.callout.warning .callout-title { color: var(--warning); }
+.callout.danger  .callout-title { color: var(--danger);  }
+.callout.info    .callout-title { color: var(--info);    }
+
+/* Pills */
+.pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+.pill.success { background: rgba(34,197,94,.15); color: var(--success); }
+.pill.warning { background: rgba(245,158,11,.15); color: var(--warning); }
+.pill.danger  { background: rgba(239,68,68,.15);  color: var(--danger);  }
+.pill.info    { background: rgba(59,130,246,.15); color: var(--info);    }
+.pill.neutral { background: var(--bg3); color: var(--text2); }
+
+/* Stats */
+.stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+.stat-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; min-width: 130px; }
+.stat-value { font-size: 20px; font-weight: 700; }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* Tables */
+.tbl-wrap { overflow-x: auto; margin: 12px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: var(--bg3); color: var(--text2); font-weight: 600; padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+/* Code */
+pre, code { font-family: "JetBrains Mono", "Fira Code", monospace; font-size: 12px; }
+pre { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; overflow-x: auto; line-height: 1.7; color: var(--text); white-space: pre; margin: 10px 0; }
+
+/* Collapsible */
+details { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin: 6px 0; }
+summary { padding: 10px 14px; cursor: pointer; font-weight: 500; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+summary::after { content: "▸"; color: var(--text2); transition: transform .2s; }
+details[open] summary::after { transform: rotate(90deg); }
+details .details-body { padding: 12px 16px; border-top: 1px solid var(--border); }
+.tag { font-size: 11px; color: var(--text3); }
+ul.bullet { padding-left: 18px; }
+ul.bullet li { color: var(--text2); margin: 4px 0; }
+ul.bullet li ul { margin-top: 4px; }
+a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Wise — Senior Product Analyst Interview Prep</h1>
+<p class="subtitle">Business fluency, measurable metric trees, diagnosis practice, and a community-sourced SQL bank — for the Product Analyst loop, not a PM loop. Figures are Wise's FY26 (year ended 31 Mar 2026) and Q1 FY27 disclosures unless noted. For the MXN→USD case-study deck itself, see the <a href="#" data-group="wise" data-jump="bridge">Case Study Bridge</a> tab.</p>
+<hr class="divider">
+<div class="tabs">
+<button class="tab-btn active" data-group="wise" data-tab="business">Business &amp; Revenue</button>
+<button class="tab-btn" data-group="wise" data-tab="products">Products &amp; Surfaces (US)</button>
+<button class="tab-btn" data-group="wise" data-tab="segments">Segments &amp; Journeys</button>
+<button class="tab-btn" data-group="wise" data-tab="metrics">Core Metrics</button>
+<button class="tab-btn" data-group="wise" data-tab="diagnose">Diagnose a Metric</button>
+<button class="tab-btn" data-group="wise" data-tab="experiments">A/B Test Design</button>
+<button class="tab-btn" data-group="wise" data-tab="sql">SQL Questions</button>
+<button class="tab-btn" data-group="wise" data-tab="bridge">Case Study Bridge</button>
+<button class="tab-btn" data-group="wise" data-tab="qa">Q&amp;A / What to Say</button>
+</div>
+<hr class="divider">
+
+<!-- ================= BUSINESS & REVENUE ================= -->
+<div class="tab-panel active" data-group="wise" data-tab="business">
+<h2>What Wise is</h2>
+<ul class="bullet">
+<li>Mission: "money without borders" — instant, convenient, transparent, and eventually free international money movement.</li>
+<li>Core wedge: the <strong>real (mid-market) exchange rate</strong> plus a small, disclosed fee, instead of banks' hidden FX markup.</li>
+<li>Regulated as a money transmitter / e-money institution in every market it operates — this is why the case study calls out a "very high bar for compliance."</li>
+</ul>
+
+<h2>How Wise makes money (3 revenue lines)</h2>
+<div class="stats">
+<div class="stat-box"><div class="stat-value">$2.5B</div><div class="stat-label">Net revenue, FY26 (+19% YoY)</div></div>
+<div class="stat-box"><div class="stat-value">$243.5B</div><div class="stat-label">Cross-border volume, FY26 (+31% YoY)</div></div>
+<div class="stat-box"><div class="stat-value">0.52%</div><div class="stat-label">Take rate, FY26 (down from 0.58% FY25)</div></div>
+<div class="stat-box"><div class="stat-value">0.50%</div><div class="stat-label">Take rate, Q1 FY27 — lowest ever</div></div>
+</div>
+<div class="tbl-wrap"><table>
+<thead><tr><th>Revenue line</th><th>What it is</th><th>FY26 scale</th></tr></thead>
+<tbody>
+<tr><td><strong>Cross-border transfer fees</strong></td><td>Take rate applied to volume moved between currencies</td><td>Take rate compressing (0.58%→0.52%→0.50%) — Wise is deliberately cutting price as volume scales</td></tr>
+<tr><td><strong>Net interest income</strong></td><td>Interest earned on customer balances Wise holds (float), net of what's paid out to customers via the Interest feature</td><td>$806.1M</td></tr>
+<tr><td><strong>Card &amp; other revenue</strong></td><td>Card interchange, Wise Business subscriptions, Wise Platform fees</td><td>$636.6M</td></tr>
+</tbody>
+</table></div>
+<div class="callout info">
+<div class="callout-title">Why this matters for a PA interview</div>
+<ul class="bullet">
+<li>Almost half of net revenue is now <em>not</em> from cross-border fees — Wise is a diversified fintech, not just a remittance company. Don't answer product-sense questions as if transfer fees are the only lever.</li>
+<li>Take rate compression is a strategic choice (transparency + scale flywheel), not a problem to "fix." If asked to diagnose a take-rate decline, first check whether it's the intentional pricing strategy before treating it as a regression.</li>
+</ul>
+</div>
+
+<h2>Infrastructure that makes the compliance bar real</h2>
+<ul class="bullet">
+<li><strong>90+</strong> local gateway banking partners</li>
+<li><strong>65+</strong> licenses across markets</li>
+<li><strong>6</strong> direct connections to local payment systems</li>
+<li><strong>40+</strong> currencies, <strong>190+</strong> countries covered</li>
+<li>Wise Platform also powers other institutions directly — e.g. Morgan Stanley uses Wise Platform for FX international settlements, alongside Standard Chartered and 80+ banks/platforms overall.</li>
+</ul>
+<p class="tag">Sources: fxcintel.com FY26/Q1 FY27 earnings analysis, theindustryspread.com, americanbanker.com, wise.com/platform.</p>
+</div>
+
+<!-- ================= PRODUCTS & SURFACES (US) ================= -->
+<div class="tab-panel" data-group="wise" data-tab="products">
+<h2>What's actually live for a US customer</h2>
+<p>Scoped to the US specifically — don't cite a feature in an interview without checking it's not region-gated.</p>
+<div class="tbl-wrap"><table>
+<thead><tr><th>Product / feature</th><th>US availability</th><th>Detail</th></tr></thead>
+<tbody>
+<tr><td><strong>Personal transfers</strong></td><td><span class="pill success">Available</span></td><td>Send in 30–103 currencies depending on route</td></tr>
+<tr><td><strong>Wise Account (multi-currency balances)</strong></td><td><span class="pill success">Available</span></td><td>Hold balances, receive local payment details (account/routing-style) in 22 currencies</td></tr>
+<tr><td><strong>Wise Card</strong></td><td><span class="pill success">Available</span></td><td>Usable in 215 countries/territories, spends directly from multi-currency balance</td></tr>
+<tr><td><strong>Interest on USD balance</strong></td><td><span class="pill warning">Available, region-gated</span></td><td>Variable APY (~3–4% range historically, opt-in, not a bank account); FDIC pass-through up to $250K via program bank JPMorgan Chase; <strong>NOT available to NY or Alaska residents</strong></td></tr>
+<tr><td><strong>Wise Business</strong></td><td><span class="pill success">Available</span></td><td>Full multi-currency business account: send, spend, receive, batch payments</td></tr>
+<tr><td><strong>Wise Platform / API</strong></td><td><span class="pill success">Available (B2B)</span></td><td>Banks/fintechs integrate Wise's payments infra directly rather than building cross-border rails themselves</td></tr>
+<tr><td><strong>Wise Assets / investing</strong></td><td><span class="pill neutral">Unconfirmed for US — verify before citing</span></td><td>Offered via a local "Wise Assets" entity depending on market; don't assume US availability without checking wise.com/us directly before the interview</td></tr>
+</tbody>
+</table></div>
+
+<div class="callout warning">
+<div class="callout-title">Region-gate to remember</div>
+<p>Interest is the one clean example of a feature that's live in the US but explicitly excluded for two states (NY, AK) — a good ready answer if asked "name a case where Wise had to launch a feature with a carve-out for regulatory reasons."</p>
+</div>
+
+<h2>How the products connect (US customer's stack)</h2>
+<ul class="bullet">
+<li><strong>Entry point:</strong> almost always a one-off Personal Transfer (send money abroad).</li>
+<li><strong>Upsell 1:</strong> open a Wise Account to hold multi-currency balances instead of converting back every time.</li>
+<li><strong>Upsell 2:</strong> get the Wise Card to spend directly from those balances (avoids a second FX conversion).</li>
+<li><strong>Upsell 3:</strong> opt into Interest on the idle USD balance.</li>
+<li><strong>Separate track:</strong> Wise Business for SMBs/freelancers who get paid internationally or pay overseas suppliers.</li>
+</ul>
+</div>
+
+<!-- ================= SEGMENTS & JOURNEYS ================= -->
+<div class="tab-panel" data-group="wise" data-tab="segments">
+<h2>Core customer segments</h2>
+<div class="grid grid-2">
+<div class="card"><div class="card-header">Migrants / expats (remittance senders)</div><div class="card-body">
+<ul class="bullet">
+<li><strong>JTBD:</strong> reliably get money to family abroad at a fair, predictable rate.</li>
+<li>Price-sensitive, trust-sensitive (first transfer is the highest-anxiety moment), often recurring/habitual sends (e.g. monthly).</li>
+</ul>
+</div></div>
+<div class="card"><div class="card-header">Digital nomads / frequent travelers</div><div class="card-body">
+<ul class="bullet">
+<li><strong>JTBD:</strong> spend abroad without hidden FX/ATM fees.</li>
+<li>Primary product: Wise Card. Lower transfer frequency, higher card-spend frequency.</li>
+</ul>
+</div></div>
+<div class="card"><div class="card-header">Freelancers / remote workers paid internationally</div><div class="card-body">
+<ul class="bullet">
+<li><strong>JTBD:</strong> receive foreign-currency payments (e.g. USD from a US client) as if they had a local bank account, avoid client-side wire fees.</li>
+<li>Uses multi-currency receiving details heavily; sensitive to receive-side fees, not just send-side.</li>
+</ul>
+</div></div>
+<div class="card"><div class="card-header">SMBs / e-commerce sellers</div><div class="card-body">
+<ul class="bullet">
+<li><strong>JTBD:</strong> pay overseas suppliers, receive marketplace payouts (Amazon, Etsy, etc.) in multiple currencies without losing margin to FX spread.</li>
+<li>Primary product: Wise Business. Higher transaction value, lower frequency, more compliance touchpoints (business KYC/KYB).</li>
+</ul>
+</div></div>
+</div>
+<div class="card"><div class="card-header">Platform partners (banks / fintechs)</div><div class="card-body">
+<ul class="bullet">
+<li><strong>JTBD:</strong> offer cross-border payments to their own customers without building FX/payout infrastructure from scratch.</li>
+<li>Primary product: Wise Platform/API. B2B2C — Wise's customer is the institution, the end user never sees the Wise brand.</li>
+</ul>
+</div></div>
+
+<h2>Generic customer journey (funnel shape used in Core Metrics)</h2>
+<ul class="bullet">
+<li><strong>Awareness</strong> → hears about Wise (often via mid-market-rate comparison marketing vs. a bank)</li>
+<li><strong>Signup</strong> → creates account</li>
+<li><strong>KYC</strong> → identity verification submitted → approved</li>
+<li><strong>First transfer</strong> → activation moment</li>
+<li><strong>Repeat transfer</strong> → habitual usage, often route/corridor-specific</li>
+<li><strong>Multi-product adoption</strong> → adds Wise Account balance, Card, Interest</li>
+</ul>
+</div>
+
+<!-- ================= CORE METRICS ================= -->
+<div class="tab-panel" data-group="wise" data-tab="metrics">
+<h2>L1 — North star candidates (pick based on the question's framing)</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>Metric</th><th>Formula</th><th>When to use it</th></tr></thead>
+<tbody>
+<tr><td><strong>Cross-Border Volume</strong></td><td>Σ (transfer send-amount converted to a common currency, e.g. USD) over period</td><td>Growth/scale questions, demand-estimation questions (this is what the case study asks you to size)</td></tr>
+<tr><td><strong>Net Revenue</strong></td><td>Cross-border fee revenue + net interest income + card &amp; other revenue</td><td>"Is this worth investing in" / business-value questions</td></tr>
+<tr><td><strong>Active Customers</strong></td><td>Distinct customers with ≥1 completed transaction in trailing 12 months</td><td>Engagement/health questions, cohort framing</td></tr>
+</tbody>
+</table></div>
+
+<h2>L2 — Drivers (each with an explicit formula)</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>Metric</th><th>Formula</th><th>Why it matters</th></tr></thead>
+<tbody>
+<tr><td>Signup Rate</td><td>New accounts created / unique visitors or app installs</td><td>Top-of-funnel acquisition efficiency</td></tr>
+<tr><td>KYC Pass Rate</td><td>KYC approved / KYC submitted</td><td>Compliance friction — a PA-relevant lever unique to fintech, not a typical consumer-app metric</td></tr>
+<tr><td>First-Transfer (Activation) Rate</td><td>Customers completing 1st transfer within N days / signups in that cohort</td><td>Activation — the real "did onboarding work" signal</td></tr>
+<tr><td>Take Rate</td><td>Net transfer revenue / Cross-border volume</td><td>Pricing/monetization efficiency; watch for intentional compression (see Business tab)</td></tr>
+<tr><td>Transfers per Active Customer</td><td>Total completed transfers / active customers (trailing 12mo)</td><td>Depth of usage / habit strength</td></tr>
+<tr><td>12-Month Retention</td><td>(Customers active in month M <em>and</em> still active in month M+12) / customers active in month M</td><td>Long-run stickiness, cohort-based not point-in-time</td></tr>
+</tbody>
+</table></div>
+
+<h2>L3 — Route / corridor-level (ties directly into the case study's demand-estimation logic)</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>Metric</th><th>Formula</th><th>Why it matters</th></tr></thead>
+<tbody>
+<tr><td>Corridor Volume</td><td>Σ send-amount for a specific (send-currency → receive-currency) pair</td><td>Demand sizing for a new or existing route</td></tr>
+<tr><td>Corridor Conversion Rate</td><td>Completed transfers / initiated transfers, for that corridor</td><td>Route-specific friction (e.g. a payout-partner issue in one corridor only)</td></tr>
+<tr><td>Corridor Take Rate</td><td>Corridor revenue / corridor volume</td><td>Some corridors are structurally lower/higher margin (FX liquidity, competition, regulatory cost)</td></tr>
+<tr><td>Cost-to-Serve per Corridor</td><td>(Compliance + FX hedging + payout-partner costs) / corridor volume</td><td>The "is it worth launching" question — pairs corridor volume with corridor cost to get a real ROI view, not just top-line demand</td></tr>
+</tbody>
+</table></div>
+
+<div class="callout success">
+<div class="callout-title">How this maps to the case study</div>
+<p>The MXN→USD deck's demand-estimation section (Slides 3–7) is this exact L1→L3 tree applied to one corridor: identify demand → evaluate demand quality → estimate adoption → weigh corridor revenue against corridor cost. See the <a href="#" data-group="wise" data-jump="bridge">Case Study Bridge</a> tab.</p>
+</div>
+</div>
+
+<!-- ================= DIAGNOSE A METRIC ================= -->
+<div class="tab-panel" data-group="wise" data-tab="diagnose">
+<h2>4-step diagnosis framework</h2>
+<ol style="padding-left:20px; color:var(--text2);">
+<li style="margin:8px 0;"><strong>Confirm it's real, not instrumentation.</strong>
+<ul class="bullet"><li>Check event logging changes, deduping logic, timezone bucketing, a recent schema/label change.</li></ul>
+</li>
+<li style="margin:8px 0;"><strong>Segment the decline.</strong>
+<ul class="bullet"><li>Platform (iOS / Android / Web), region or corridor, new vs. returning customer, funnel step (signup vs. KYC vs. first-transfer vs. repeat).</li></ul>
+</li>
+<li style="margin:8px 0;"><strong>Layer on time.</strong>
+<ul class="bullet"><li>Sudden step-change (points at a release, outage, or bug) vs. gradual drift (points at a market or competitive shift).</li></ul>
+</li>
+<li style="margin:8px 0;"><strong>Internal vs. external cause.</strong>
+<ul class="bullet"><li>Internal: bug, pricing change, KYC policy tightening.</li><li>External: FX-rate shock, competitor pricing move, regulatory change in a market, seasonality (remittance volume is seasonal — e.g. holidays).</li></ul>
+</li>
+</ol>
+
+<details>
+<summary>Worked example — a real data-integrity story from the case study <span class="tag">use this if asked for a concrete example</span></summary>
+<div class="details-body">
+<ul class="bullet">
+<li>A corridor's Android + New-customer + Europe conversion rate looked like it had cratered.</li>
+<li>Root cause tracing (step 2 above — segment first): a table in the raw data was headered "Europe – Android – New" but actually contained <em>non</em>-Android data — the word "non" was missing from the label.</li>
+<li>Confirmed via the raw SQL data tab that the true Android+New+Europe numbers live in a different, correctly-computed block, and they do support the deck's real "~3%" claim.</li>
+<li>Also confirmed the mislabeling never reached any customer-facing slide — the deck itself stayed clean, but it would have if the labeling bug hadn't been caught before finalizing.</li>
+<li><strong>The lesson to say out loud in an interview:</strong> before diagnosing a metric decline as a real behavioral problem, verify the segmentation labels themselves are correct — a mislabeled dimension can look exactly like a real drop.</li>
+</ul>
+</div>
+</details>
+</div>
+
+<!-- ================= A/B TEST DESIGN ================= -->
+<div class="tab-panel" data-group="wise" data-tab="experiments">
+<h2>Standard experiment design framework</h2>
+<ul class="bullet">
+<li><strong>Hypothesis:</strong> state the causal mechanism, not just "metric goes up."</li>
+<li><strong>Primary metric:</strong> pick one; add guardrails (e.g. a pricing test's primary metric might be conversion rate, guardrails = take rate, complaint rate).</li>
+<li><strong>Unit of randomization:</strong> usually customer-level for Wise (transfers are largely independent events, unlike a social/marketplace product with network effects) — but corridor-level tests need corridor-level randomization or stratification to avoid contaminating a shared FX/pricing config.</li>
+<li><strong>Sample size / power:</strong> cross-border transfers are relatively low-frequency per customer, so power calculations often need longer run times or a proxy metric (e.g. transfer-initiated rate instead of waiting for full-cycle completion).</li>
+<li><strong>Duration:</strong> account for weekly seasonality (remittance sends cluster around paydays) and avoid test windows that straddle a known seasonal spike (e.g. holiday remittances).</li>
+<li><strong>Analysis:</strong> transfer amounts are heavily skewed (a few large business transfers dominate) — variance-reduction techniques (CUPED using pre-period volume) matter more than in a typical consumer app.</li>
+</ul>
+
+<h2>Wise-specific gotchas</h2>
+<ul class="bullet">
+<li><strong>Corridor confounds:</strong> never launch a pricing test on one corridor without checking whether customers can route around it (e.g. sending to an intermediate currency first) — that would leak the treatment.</li>
+<li><strong>Regulatory review gates:</strong> some markets require compliance sign-off before a pricing or product test can launch at all — this can dominate the timeline more than the statistical design.</li>
+<li><strong>Minimal network effects:</strong> unlike a marketplace, one customer's transfer doesn't directly affect another's experience, so simple randomization mostly holds — the exception is shared FX-rate/liquidity pools within a corridor.</li>
+</ul>
+
+<details>
+<summary>Example test design — tie back to the case study corridor</summary>
+<div class="details-body">
+<ul class="bullet">
+<li><strong>Hypothesis:</strong> lowering the take rate on the MXN→USD corridor by X bps increases conversion rate enough to grow net corridor revenue, not just volume.</li>
+<li><strong>Primary metric:</strong> corridor net revenue (not just conversion — a lower take rate that only grows volume proportionally is neutral or worse).</li>
+<li><strong>Guardrails:</strong> corridor conversion rate, cost-to-serve per transfer, complaint/support-ticket rate.</li>
+<li><strong>Randomization unit:</strong> customer, stratified by whether they've used this corridor before (new vs. repeat sender behave very differently on price sensitivity).</li>
+</ul>
+</div>
+</details>
+</div>
+
+<!-- ================= SQL QUESTIONS ================= -->
+<div class="tab-panel" data-group="wise" data-tab="sql">
+<div class="callout info">
+<div class="callout-title">What's actually publicly known</div>
+<ul class="bullet">
+<li>Glassdoor's own summary of Wise Data Analyst interviews (not the individual question text — that page requires a login and returned a 403 when checked) confirms the process: intro call → SQL coding → case study → senior-stakeholder interview, with candidates assessed on <strong>SQL, Python, Statistics, and Data Analysis</strong>.</li>
+<li>Blind/Reddit searches turned up general Wise engineering-interview process descriptions (HackerRank pair-programming, easy/medium difficulty) but <strong>no verbatim SQL question text</strong> for the analyst track.</li>
+<li>The questions below are therefore <strong>originally written</strong>, styled to match Wise's actual data domain (corridors, KYC funnel, repeat transfers) — not reported questions. Treat them as realistic practice, not leaked content.</li>
+</ul>
+</div>
+
+<h2>Practice questions</h2>
+
+<details>
+<summary>1. Monthly corridor volume with month-over-month % change</summary>
+<div class="details-body">
+<p><strong>Setup:</strong> table <code>transfers(transfer_id, customer_id, send_currency, receive_currency, send_amount_usd, created_at, status)</code>.</p>
+<p><strong>Ask:</strong> for each (send_currency, receive_currency) corridor, return monthly volume and MoM % change.</p>
+<pre>WITH monthly AS (
+  SELECT send_currency, receive_currency,
+         DATE_TRUNC('month', created_at) AS month,
+         SUM(send_amount_usd) AS volume
+  FROM transfers
+  WHERE status = 'completed'
+  GROUP BY 1,2,3
+)
+SELECT *,
+       (volume - LAG(volume) OVER (
+          PARTITION BY send_currency, receive_currency ORDER BY month
+        )) / LAG(volume) OVER (
+          PARTITION BY send_currency, receive_currency ORDER BY month
+        ) AS mom_pct_change
+FROM monthly
+ORDER BY send_currency, receive_currency, month;</pre>
+</div>
+</details>
+
+<details>
+<summary>2. KYC funnel conversion by step</summary>
+<div class="details-body">
+<p><strong>Setup:</strong> table <code>customer_events(customer_id, event_name, event_at)</code> with events <code>signup</code>, <code>kyc_submitted</code>, <code>kyc_approved</code>, <code>first_transfer</code>.</p>
+<p><strong>Ask:</strong> conversion rate at each funnel step.</p>
+<pre>SELECT
+  COUNT(DISTINCT CASE WHEN event_name='signup' THEN customer_id END) AS signups,
+  COUNT(DISTINCT CASE WHEN event_name='kyc_submitted' THEN customer_id END) AS kyc_submitted,
+  COUNT(DISTINCT CASE WHEN event_name='kyc_approved' THEN customer_id END) AS kyc_approved,
+  COUNT(DISTINCT CASE WHEN event_name='first_transfer' THEN customer_id END) AS activated,
+  1.0 * COUNT(DISTINCT CASE WHEN event_name='kyc_approved' THEN customer_id END)
+      / NULLIF(COUNT(DISTINCT CASE WHEN event_name='kyc_submitted' THEN customer_id END),0)
+      AS kyc_pass_rate
+FROM customer_events;</pre>
+</div>
+</details>
+
+<details>
+<summary>3. Repeat-transfer rate within 90 days (cohort)</summary>
+<div class="details-body">
+<p><strong>Setup:</strong> same <code>transfers</code> table as Q1.</p>
+<p><strong>Ask:</strong> of customers whose first transfer was in a given month, what % sent a second transfer within 90 days?</p>
+<pre>WITH first_transfer AS (
+  SELECT customer_id, MIN(created_at) AS first_at
+  FROM transfers WHERE status='completed'
+  GROUP BY customer_id
+),
+second_within_90 AS (
+  SELECT f.customer_id
+  FROM first_transfer f
+  JOIN transfers t
+    ON t.customer_id = f.customer_id
+   AND t.created_at > f.first_at
+   AND t.created_at <= f.first_at + INTERVAL '90 days'
+   AND t.status='completed'
+  GROUP BY f.customer_id
+)
+SELECT DATE_TRUNC('month', f.first_at) AS cohort_month,
+       COUNT(DISTINCT f.customer_id) AS cohort_size,
+       COUNT(DISTINCT s.customer_id) AS repeat_within_90d,
+       1.0 * COUNT(DISTINCT s.customer_id) / COUNT(DISTINCT f.customer_id) AS repeat_rate
+FROM first_transfer f
+LEFT JOIN second_within_90 s ON s.customer_id = f.customer_id
+GROUP BY 1
+ORDER BY 1;</pre>
+</div>
+</details>
+
+<details>
+<summary>4. Top corridors by volume with running cumulative share</summary>
+<div class="details-body">
+<p><strong>Ask:</strong> rank corridors by total volume and show cumulative % of total volume (useful for a "how concentrated is demand" story).</p>
+<pre>WITH corridor_totals AS (
+  SELECT send_currency, receive_currency, SUM(send_amount_usd) AS volume
+  FROM transfers WHERE status='completed'
+  GROUP BY 1,2
+)
+SELECT *,
+       RANK() OVER (ORDER BY volume DESC) AS rank,
+       SUM(volume) OVER (ORDER BY volume DESC) / SUM(volume) OVER () AS cumulative_share
+FROM corridor_totals
+ORDER BY volume DESC;</pre>
+</div>
+</details>
+
+<details>
+<summary>5. Detect a corridor's anomalous daily drop vs. its own 7-day trailing average</summary>
+<div class="details-body">
+<p><strong>Ask:</strong> flag corridor-days where volume falls more than 30% below that corridor's trailing 7-day average — a lightweight anomaly-detection query, relevant to the Diagnose-a-Metric framework.</p>
+<pre>WITH daily AS (
+  SELECT send_currency, receive_currency, DATE(created_at) AS day,
+         SUM(send_amount_usd) AS volume
+  FROM transfers WHERE status='completed'
+  GROUP BY 1,2,3
+),
+with_avg AS (
+  SELECT *,
+         AVG(volume) OVER (
+           PARTITION BY send_currency, receive_currency
+           ORDER BY day
+           ROWS BETWEEN 7 PRECEDING AND 1 PRECEDING
+         ) AS trailing_7d_avg
+  FROM daily
+)
+SELECT * FROM with_avg
+WHERE volume < 0.7 * trailing_7d_avg
+ORDER BY day;</pre>
+</div>
+</details>
+
+<details>
+<summary>6. Interest opted-in, but dormant (anti-join)</summary>
+<div class="details-body">
+<p><strong>Setup:</strong> tables <code>interest_optins(customer_id, opted_in_at)</code> and <code>transfers</code>.</p>
+<p><strong>Ask:</strong> customers who opted into USD Interest more than 90 days ago but have zero completed transfers in that window — a churn/engagement-risk query.</p>
+<pre>SELECT i.customer_id, i.opted_in_at
+FROM interest_optins i
+WHERE i.opted_in_at <= CURRENT_DATE - INTERVAL '90 days'
+  AND NOT EXISTS (
+    SELECT 1 FROM transfers t
+    WHERE t.customer_id = i.customer_id
+      AND t.status = 'completed'
+      AND t.created_at >= i.opted_in_at
+  );</pre>
+</div>
+</details>
+</div>
+
+<!-- ================= CASE STUDY BRIDGE ================= -->
+<div class="tab-panel" data-group="wise" data-tab="bridge">
+<h2>This page vs. the case-study deck prep</h2>
+<div class="callout success">
+<div class="callout-title">Two different files, two different jobs</div>
+<ul class="bullet">
+<li><strong>This page</strong> = general Wise product/business fluency, a reusable metrics framework, and diagnosis/SQL practice — for any question the interviewers throw that isn't specifically about the submitted deck.</li>
+<li><strong><a href="presentation-outline.md">presentation-outline.md</a></strong> = the actual slide-by-slide script for the MXN→USD take-home deck (16 slides, content + speaker notes).</li>
+<li><strong><a href="hard-followup-qa.md">hard-followup-qa.md</a></strong> = tiered hard-follow-up Q&amp;A checked directly against the deck, tagged ✅ From deck / 🧩 Suggested / ✍️ Your story needed.</li>
+</ul>
+</div>
+<p>GitHub Pages serves <code>.md</code> files as raw text, not rendered markdown. For a properly rendered view, open them on GitHub directly:</p>
+<ul class="bullet">
+<li><a href="https://github.com/Himanshu2405/MyGitPages/blob/main/wise-regional-product-analyst-prep/presentation-outline.md" target="_blank" rel="noopener">presentation-outline.md on GitHub</a></li>
+<li><a href="https://github.com/Himanshu2405/MyGitPages/blob/main/wise-regional-product-analyst-prep/hard-followup-qa.md" target="_blank" rel="noopener">hard-followup-qa.md on GitHub</a></li>
+</ul>
+
+<h2>The 3 real interview focus areas</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>Area</th><th>Focus</th><th>Where to prep it</th></tr></thead>
+<tbody>
+<tr><td><strong>1. Technical Fluency &amp; Data Integrity</strong></td><td>Trusting your own numbers — catching labeling/instrumentation bugs before they become a wrong conclusion</td><td>Diagnose a Metric tab (worked example) + deck's Android mislabeling story</td></tr>
+<tr><td><strong>2. Technical Scoping &amp; Demand Estimation</strong></td><td>Deciding if a route is "worth the investment"; query/pipeline performance at scale</td><td>Core Metrics tab (L3 corridor tree) + <code>presentation-outline.md</code> Slides 3–7</td></tr>
+<tr><td><strong>3. Product Sense &amp; Strategic Synthesis</strong></td><td>Connecting data to a product/business decision</td><td>Business &amp; Revenue tab (take-rate strategy) + Segments tab</td></tr>
+</tbody>
+</table></div>
+</div>
+
+<!-- ================= Q&A ================= -->
+<div class="tab-panel" data-group="wise" data-tab="qa">
+<h2>High-yield Q&amp;A, by focus area</h2>
+
+<h3>1. Technical Fluency &amp; Data Integrity</h3>
+<div class="card"><div class="card-body">
+<p><strong>Q: How do you know your numbers are right before you present them?</strong></p>
+<ul class="bullet">
+<li>🧩 Reconcile the same figure two ways (e.g. a raw SQL pull vs. a pre-aggregated sheet tab) before trusting either.</li>
+<li>🧩 Check dimension/segment labels literally, not just the totals — a mislabeled column can produce a real-looking but false decline (see Diagnose a Metric tab's Android example).</li>
+<li>✍️ Have your own concrete story ready — the deck's Android/"non-Android" labeling bug is a strong one if it's genuinely yours to tell; otherwise substitute a real example from your own work.</li>
+</ul>
+</div></div>
+
+<h3>2. Technical Scoping &amp; Demand Estimation</h3>
+<div class="card"><div class="card-body">
+<p><strong>Q: How do you decide if a new route/feature is worth building?</strong></p>
+<ul class="bullet">
+<li>✅ From deck: size demand (identify → evaluate quality → estimate adoption), then weigh corridor revenue against corridor cost-to-serve, decide via payback framing — see <code>presentation-outline.md</code> Slide 7.</li>
+</ul>
+<p><strong>Q: How do your query/pipeline choices affect performance at scale?</strong></p>
+<ul class="bullet">
+<li>🧩 Filter/aggregate as early as possible (push predicates before joins), avoid re-scanning full transfer history when a partitioned/incremental read would do, watch for fan-out joins on high-cardinality dimensions like corridor × day.</li>
+</ul>
+</div></div>
+
+<h3>3. Product Sense &amp; Strategic Synthesis</h3>
+<div class="card"><div class="card-body">
+<p><strong>Q: Wise keeps cutting its take rate — is that a good or bad sign?</strong></p>
+<ul class="bullet">
+<li>✅ From research: it's a deliberate strategy — FY26 take rate fell to 0.52% (from 0.58%), and further to 0.50% in Q1 FY27, while volume grew 31% and net revenue grew 19%. Read it as a scale flywheel (lower price → more volume → still-growing revenue), not a monetization failure, and note revenue is diversifying beyond transfer fees (interest income, card revenue).</li>
+</ul>
+</div></div>
+
+<div class="callout warning">
+<div class="callout-title">Reminder</div>
+<p>This tab is intentionally short — it's the general-fluency companion to <code>hard-followup-qa.md</code>, which has the full tiered Q&amp;A bank checked against the actual submitted deck. Go there for depth on Area 2.</p>
+</div>
+</div>
+
+</div>
+<script>
+function initTabs(containerId) {
+  var c = document.getElementById(containerId) || document;
+  c.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var group = btn.dataset.group;
+      c.querySelectorAll('.tab-btn[data-group="'+group+'"]').forEach(function(b){ b.classList.remove('active'); });
+      c.querySelectorAll('.tab-panel[data-group="'+group+'"]').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      var panel = c.querySelector('.tab-panel[data-group="'+group+'"][data-tab="'+btn.dataset.tab+'"]');
+      if(panel) panel.classList.add('active');
+    });
+  });
+  c.querySelectorAll('[data-jump]').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      var group = link.dataset.group, tab = link.dataset.jump;
+      var btn = c.querySelector('.tab-btn[data-group="'+group+'"][data-tab="'+tab+'"]');
+      if (btn) btn.click();
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+}
+document.addEventListener('DOMContentLoaded', function() { initTabs(); });
+</script>
+</body>
+</html>

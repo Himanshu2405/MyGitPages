@@ -3505,6 +3505,7 @@ CANVASES = [
 # next to this script and are copied into OUT_DIR verbatim.
 STATIC_CANVASES = [
     "handshake-senior-ds-prep",
+    "wise-regional-product-analyst-prep",
 ]
 
 # Landing-page metadata: (category, [(slug, title, description, tag), ...])
@@ -3516,6 +3517,8 @@ INDEX_SECTIONS = [
          "Sony/PlayStation business fluency, L1&rarr;L3 metric trees, metric-decline diagnosis, and A/B test design.", "PlayStation"),
         ("binance-us-prep", "Binance.US — Senior Product Analyst Prep",
          "Crypto product fluency, stickiness metrics, 6 experiment designs, decline diagnosis, and behavioral Q&A.", "Binance.US"),
+        ("wise-regional-product-analyst-prep", "Wise — Senior Product Analyst Prep",
+         "Cross-border fintech business fluency, US-market product scope, measurable L1&rarr;L3 metric trees, metric diagnosis, A/B test design, and a community-sourced SQL question bank.", "Wise"),
         ("ab-test-stats-prep", "A/B Testing Stats — Senior PA Prep",
          "10-tab applied stats: metrics & tests, power analysis, holdouts, CUPED, quasi-experiments, model eval, decision cases.", "Stats"),
     ]),
